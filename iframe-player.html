@@ -21,22 +21,27 @@
 <body>
     <div id="player-container"></div>
     <script type="text/javascript"><!--
-    function getUrlParam(name) {
-        name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-        var regexS = "[\\?&]"+name+"=([^&#]*)";
-        var regex = new RegExp( regexS );
-        var results = regex.exec(window.location.href);
-        if( results == null )
-            return "";
-        else
-            return results[1];
+
+    // Get the config from the parent window
+    var sgfContainerId = 'player-container-' + window.location.hash.substring(1);
+    var config = parent.document.getElementById(sgfContainerId).eidogoConfig;
+
+    // EidoGo tests config.loadPath against "instanceof Array". Because we're
+    // getting the config from the parent window and javascript is weird, that
+    // test fails (it's "instance of parent.Array"). We can't copy it with
+    // foo.slice(0) becuase while it works in Firefox, IE copys the
+    // parent.Array data type to the slice. So we just have to loop.
+    if (config.loadPath && config.loadPath instanceof parent.Array) {
+        var loadPath = []
+        for (var x=0; x<config.loadPath.length; x++)
+            loadPath[x] = config.loadPath[x]
+        config.loadPath = loadPath;
     }
 
-    var sgfContainerId = 'player-container-' + getUrlParam('id');
-    var config = parent.document.getElementById(sgfContainerId).eidogoConfig;
+    // Create the player in the given container
     config.container = "player-container";
-    // document.getElementById(config.container).className = 'theme-' + config.theme;
     var player = new eidogo.Player(config);
+
     --></script>
 </body>
 </html>

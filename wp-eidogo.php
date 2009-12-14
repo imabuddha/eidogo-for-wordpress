@@ -3,15 +3,16 @@
 Plugin Name: EidoGo for WordPress
 Plugin URI: http://www.fortmyersgo.org/eidogo-for-wordpress/
 Description: Embeds the EidoGo SGF viewer/editor into a WordPress-powered blog
-Version: 0.5
+Version: 0.6
 Author: Thomas Schumm
 Author URI: http://www.fortmyersgo.org/
 */
 
 $sgf_count = 0;
+$sgf_prepared_markup = array();
 
 function parse_attributes($params) { # {{{
-    $pattern = '/(\\w+)\s*=\\s*("[^"]*"|\'[^\']*\'|[^"\'\\s>]*)/';
+    $pattern = '/(\w+)\s*=\s*("[^"]*"|\'[^\']*\'|[^"\'\s>]*)/';
     preg_match_all($pattern, $params, $matches, PREG_SET_ORDER);
     $attrs = array();
 
@@ -24,15 +25,15 @@ function parse_attributes($params) { # {{{
     return $attrs;
 } # }}}
 
-function embed_sgf($more, $params, $sgf, $theme='compact') { # {{{
-    global $sgf_count;
+function prepare_sgf($params, $sgf_data="", $theme='compact') { # {{{
+    global $sgf_count, $sgf_prepared_markup;
     $wpu = WP_PLUGIN_URL;
 
     # Clean up the SGF data
-    if (!trim($sgf))
+    if (!trim($sgf_data))
         $sgf_data = "(;GM[1]FF[4]CA[UTF-8]SZ[19])";
     else
-        $sgf_data = strip_tags($sgf);
+        $sgf_data = trim($sgf_data);
 
     $params = parse_attributes($params);
 
@@ -55,48 +56,17 @@ function embed_sgf($more, $params, $sgf, $theme='compact') { # {{{
     elseif (preg_match('/PL\[(W|B)\]/', $sgf_data, $pgroups))
         $params['problemcolor'] = $pgroups[1];
 
-    # Shortcut for loadPath
-    if ($params['movenumber'] && is_numeric($params['movenumber']))
-        $params['loadpath'] = array($params['movenumber']+1, 0);
-
+    # Default to view mode except if we're a problem
     if (!$params['mode'] && $theme != 'problem')
         $params['mode'] = 'view';
 
-    if ($theme == 'compact-inline') { # {{{
-        $embed_method = 'inline';
-        $js_config = array(
-            'theme'             => "compact",
-            'showComments'      => true,
-            'showPlayerInfo'    => true,
-            'showGameInfo'      => false,
-            'showTools'         => true,
-            'showOptions'       => true,
-            'markCurrent'       => true,
-            'markVariations'    => true,
-            'markNext'          => false,
-            'problemMode'       => false,
-            'enableShortcuts'   => false,
-        );
-    # }}}
+    $embed_method = ($theme == 'full' || $theme == 'compact' ? 'iframe' : 'inline');
 
-    } elseif ($theme == 'problem') { # {{{
-        $embed_method = 'inline';
-        $js_config = array(
-            'theme'             => "problem",
-            'problemMode'       => true,
-            'markVariations'    => false,
-            'markNext'          => false,
-            'shrinkToFit'       => true,
-            'problemColor'      => $params['problemcolor'],
-        );
-
-    # }}}
-
-    } elseif ($theme == 'full') { # {{{
-        $embed_method = 'iframe'; $frame_w = 720; $frame_h = 600;
+    if ($theme == 'full-inline' || $theme == 'full') { # {{{
+        $frame_w = 720; $frame_h = 600;
         $js_config = array(
             'theme'             => "full",
-            'enableShortcuts'   => true,
+            'enableShortcuts'   => ($theme == 'full'),
             'showComments'      => true,
             'showPlayerInfo'    => true,
             'showGameInfo'      => true,
@@ -111,23 +81,43 @@ function embed_sgf($more, $params, $sgf, $theme='compact') { # {{{
         );
     # }}}
 
-    } else { # ($theme == 'compact') {{{
-        $embed_method = 'iframe'; $frame_w = 423; $frame_h = 621;
+    } elseif ($theme == 'compact-inline' || $theme == 'compact') { # {{{
+        $frame_w = 423; $frame_h = 621;
         $js_config = array(
             'theme'             => "compact",
-            'enableShortcuts'   => true,
+            'enableShortcuts'   => ($theme == 'compact'),
             'showComments'      => true,
             'showPlayerInfo'    => true,
             'showGameInfo'      => false,
             'showTools'         => true,
             'showOptions'       => true,
         );
-    }
     # }}}
 
-    $js_config['sgf'] = $sgf_data;
+    } elseif ($theme == 'problem') { # {{{
+        $js_config = array(
+            'theme'             => "problem",
+            'enableShortcuts'   => false,
+            'problemMode'       => true,
+            'markVariations'    => false,
+            'markNext'          => false,
+            'shrinkToFit'       => true,
+            'problemColor'      => $params['problemcolor'],
+        );
+    # }}}
+
+    } else {
+        $embed_method = 'unknown';
+    }
+
+    # Shortcut for loadPath
+    if ($params['movenumber'] && is_numeric($params['movenumber']))
+        $params['loadpath'] = array(0, $params['movenumber']);
+
+    if (!$params['sgfurl'])
+        $js_config['sgf'] = $sgf_data;
     $js_config['container'] = 'player-container-' . $sgf_count;
-    foreach (array('loadPath', 'mode') as $key) {
+    foreach (array('loadPath', 'mode', 'sgfUrl') as $key) {
         $lkey = strtolower($key);
         if ($params[$lkey])
             $js_config[$key] = $params[$lkey];
@@ -136,41 +126,79 @@ function embed_sgf($more, $params, $sgf, $theme='compact') { # {{{
     $js_config = json_encode($js_config);
 
     if ($embed_method == 'inline') {
-        $player = <<<html
-            <div class="player-container" id="player-container-{$sgf_count}"></div>
-            <script type="text/javascript"><!--
-                var wpeidogo_player{$sgf_count} = new eidogo.Player({$js_config});
-            --></script>
-html;
-    } else {
-        $player = <<<html
-            <iframe class="player-container" id="player-container-{$sgf_count}"
-                src="{$wpu}/wp-eidogo/iframe-player.html?id={$sgf_count}"
-                frameborder="0" width="{$frame_w}" height="{$frame_h}" scrolling="no">
-            </iframe>
-            <script type="text/javascript"><!--
-                document.getElementById('player-container-{$sgf_count}').eidogoConfig = {$js_config};
-            --></script>
-html;
+        $player_js = "var wpeidogo_player{$sgf_count} = new eidogo.Player({$js_config});";
 
+    } elseif ($embed_method == 'iframe') {
+        $iframe = json_encode('<iframe src="'.$wpu.'/wp-eidogo/iframe-player.html#'.$sgf_count.
+            '" frameborder="0" width="'.$frame_w.'" height="'.$frame_h.'" scrolling="no"></iframe>');
+        $player_js = <<<javascript
+            var playerContainer{$sgf_count} = document.getElementById('player-container-{$sgf_count}');
+            playerContainer{$sgf_count}.eidogoConfig = {$js_config};
+            playerContainer{$sgf_count}.innerHTML = {$iframe};
+javascript;
+
+    } else {
+        $player_js = "alert('Unknown wp-eidogo theme {$theme}.');";
     }
 
-    $sgf_count++;
+    $class = 'wp-eidogo wp-eidogo-' . $theme;
+    if ($params['class'])
+        $class .= ' ' . $params['class'];
 
-    return <<<html
-        $more
-        <div class="wp-eidogo wp-eidogo-{$theme}">
-        $player
+    $ie6_warning = json_encode('<p class="ie6warning">Internet Explorer 6 is
+        not currently supported by the EidoGo for WordPress plugin. Get a real
+        browser already for crying out loud.</p>');
+
+    $sgf_prepared_markup[$sgf_count] = <<<html
+        <div class="{$class}">
+        <div class="player-container" id="player-container-{$sgf_count}"></div>
+        <script type="text/javascript"><!--
+            if (broken_browser) {
+                document.getElementById('player-container-{$sgf_count}').innerHTML = {$ie6_warning};
+            } else {
+                $player_js
+            }
+        --></script>
         $caption
         </div>
 html;
 
+    return "\n\n[sgfPrepared id=\"".($sgf_count++)."\"]\n\n";
+
 } # }}}
 
-function add_eidogo_tags($content) { # {{{
+function embed_sgf($id) { # {{{
+    global $sgf_prepared_markup;
+    return $sgf_prepared_markup[$id];
+} # }}}
+
+function prepare_eidogo_markup($content) { # {{{
+    # For [sgf] tags with content
     $content = preg_replace(
-        '/(<p>\s*)(<span id=".*"><\/span>)?\[sgf(.*?)\]([\w\W]*?)\[\/sgf\](\s*<\/p>)?/ie',
-        'embed_sgf("$2", "$3", "$4", "compact")', $content);
+        '/\s*\[sgf(.*?)\](.*?)\[\/sgf\]\s*/sie',
+        'prepare_sgf("$1", "$2")', $content);
+
+    # For empty [sgf] tags
+    $content = preg_replace(
+        '/\s*\[sgf\s(.*?)\]\s*/sie',
+        'prepare_sgf("$1")', $content);
+
+    return $content;
+} # }}}
+
+function embed_eidogo_markup($content) { # {{{
+    $sgf_pattern = '\[sgfPrepared\s+id="(\d+)"\]';
+
+    # Handle cases that have been modified by wpautop, etc.
+    $content = preg_replace(
+        '!<p[^>]*>\s*'.$sgf_pattern.'\s*</p>!sie',
+        'embed_sgf("$1")', $content);
+
+    # Fallback in case those didn't happen
+    $content = preg_replace(
+        '!'.$sgf_pattern.'!sie',
+        'embed_sgf("$1")', $content);
+
     return $content;
 } # }}}
 
@@ -179,11 +207,29 @@ function eidogo_head() { # {{{
     echo <<<html
     <link rel="stylesheet" media="all" type="text/css" href="{$wpu}/wp-eidogo/wp-eidogo.css" />
     <link rel="stylesheet" media="all" type="text/css" href="{$wpu}/wp-eidogo/eidogo-player-1.2/player/css/player.css" />
+    <script type="text/javascript">
+        var broken_browser = false;
+    </script>
+    <!--[if lt IE 7]>
+    <script type="text/javascript">
+        broken_browser = true;
+    </script>
+    <![endif]-->
     <script type="text/javascript" src="{$wpu}/wp-eidogo/eidogo-player-1.2/player/js/all.compressed.js"></script>
 html;
 } # }}}
 
-add_filter('the_content', 'add_eidogo_tags', 99);
-add_filter('the_excerpt', 'add_eidogo_tags', 99);
-add_filter('comment_text', 'add_eidogo_tags', 99);
+# We want to embed the SGF data that is wholy unmolested by wpautop and other
+# built-in wordpress functions, so we need to do our parsing BEFORE any such
+# filters are called. However, we also want to avoid such filters modifying our
+# markup, so we need to do the actual embedding at the end of the filter chain.
+add_filter('the_content', 'prepare_eidogo_markup', 9);
+add_filter('the_excerpt', 'prepare_eidogo_markup', 9);
+add_filter('comment_text', 'prepare_eidogo_markup', 9);
+add_filter('the_content', 'embed_eidogo_markup', 99);
+add_filter('the_excerpt', 'embed_eidogo_markup', 99);
+add_filter('comment_text', 'embed_eidogo_markup', 99);
+
+# For necessary stylesheets and javascript files
 add_action('wp_head', 'eidogo_head');
+

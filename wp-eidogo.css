@@ -1,29 +1,20 @@
-/* Styles for extra stuff */
-.wp-eidogo {
-    width: 423px;
-}
-
+/* Styles for player containers */
 .wp-eidogo iframe {
-    width: 423px;
-    height: 621px;
     border: 0;
     overflow: hidden;
 }
 
-.wp-eidogo pre {
-    display: none;
+.wp-eidogo-compact, .wp-eidogo-compact iframe {
+    width: 423px;
+    height: 621px;
 }
 
-.wp-eidogo-full {
-    width: 720px;
-}
-
-.wp-eidogo-full iframe {
+.wp-eidogo-full, .wp-eidogo-full iframe {
     width: 720px;
     height: 600px;
 }
 
-/* Styles for more compact thing... */
+/* Styles for more compact/organized full eidogo theme */
 .eidogo-player.theme-full {
     width: 710px !important;
 }
@@ -157,25 +148,10 @@
     text-align: right;
 }
 
-/* For problem mode */
+/* For problem mode, make sure three lines are exactly visible for neatness */
 .wp-eidogo-problem .comments {
-    height: 36px !important;
-}
-
-.wp-eidogo-problem {
-    width: auto;
-    display: inline;
-    float: right;
-    text-align: right;
-    margin: 0 0 0 10px;
-}
-
-.wp-eidogo-problem .wp-caption-text {
-    padding: 0 1px;
-}
-
-.wp-eidogo-problem .comments {
-    padding: 4px !important;
+    height: 39px !important;
+    line-height: 13px;
 }
 
 .wp-eidogo-problem .comments .comment-status {
