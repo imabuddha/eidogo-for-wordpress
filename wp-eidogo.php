@@ -146,8 +146,7 @@ javascript;
         $class .= ' ' . $params['class'];
 
     $ie6_warning = json_encode('<p class="ie6warning">Internet Explorer 6 is
-        not currently supported by the EidoGo for WordPress plugin. Get a real
-        browser already for crying out loud.</p>');
+        not currently supported by the EidoGo for WordPress plugin. Please, <a href="http://www.getfirefox.com/">get a real web browser</a>.</p>');
 
     $sgf_prepared_markup[$sgf_count] = <<<html
         <div class="{$class}">

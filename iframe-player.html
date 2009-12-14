@@ -28,15 +28,11 @@
 
     // EidoGo tests config.loadPath against "instanceof Array". Because we're
     // getting the config from the parent window and javascript is weird, that
-    // test fails (it's "instance of parent.Array"). We can't copy it with
-    // foo.slice(0) becuase while it works in Firefox, IE copys the
-    // parent.Array data type to the slice. So we just have to loop.
-    if (config.loadPath && config.loadPath instanceof parent.Array) {
-        var loadPath = []
-        for (var x=0; x<config.loadPath.length; x++)
-            loadPath[x] = config.loadPath[x]
-        config.loadPath = loadPath;
-    }
+    // test fails (it's "instance of parent.Array"). Using foo.slice(0) gives
+    // us an Array in Firefox, but in IE, it just gives us another
+    // parent.Array. Using Array.prototype, however, seems to work.
+    if (config.loadPath && config.loadPath instanceof parent.Array)
+        config.loadPath = Array.prototype.slice.call(config.loadPath);
 
     // Create the player in the given container
     config.container = "player-container";
