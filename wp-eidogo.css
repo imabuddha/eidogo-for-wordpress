@@ -157,3 +157,14 @@
 .wp-eidogo-problem .comments .comment-status {
     margin-bottom: 0;
 }
+
+/* Basic layout within the page */
+.wp-eidogo  {
+    margin: 1.25em auto;
+}
+
+.wp-eidogo-problem {
+    display: inline; /* IE6 fix for float margins */
+    float: right;
+    margin: 0 0 0 10px;
+}

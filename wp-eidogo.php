@@ -3,7 +3,7 @@
 Plugin Name: EidoGo for WordPress
 Plugin URI: http://www.fortmyersgo.org/eidogo-for-wordpress/
 Description: Embeds the EidoGo SGF viewer/editor into a WordPress-powered blog
-Version: 0.6
+Version: 0.7
 Author: Thomas Schumm
 Author URI: http://www.fortmyersgo.org/
 */
@@ -129,7 +129,7 @@ function prepare_sgf($params, $sgf_data="", $theme='compact') { # {{{
         $player_js = "var wpeidogo_player{$sgf_count} = new eidogo.Player({$js_config});";
 
     } elseif ($embed_method == 'iframe') {
-        $iframe = json_encode('<iframe src="'.$wpu.'/wp-eidogo/iframe-player.html#'.$sgf_count.
+        $iframe = json_encode('<iframe src="'.$wpu.'/eidogo-for-wordpress/iframe-player.html#'.$sgf_count.
             '" frameborder="0" width="'.$frame_w.'" height="'.$frame_h.'" scrolling="no"></iframe>');
         $player_js = <<<javascript
             var playerContainer{$sgf_count} = document.getElementById('player-container-{$sgf_count}');
@@ -146,7 +146,8 @@ javascript;
         $class .= ' ' . $params['class'];
 
     $ie6_warning = json_encode('<p class="ie6warning">Internet Explorer 6 is
-        not currently supported by the EidoGo for WordPress plugin. Please, <a href="http://www.getfirefox.com/">get a real web browser</a>.</p>');
+        not currently supported by the EidoGo for WordPress plugin. Please, <a
+        href="http://www.getfirefox.com/">get a real web browser</a>.</p>');
 
     $sgf_prepared_markup[$sgf_count] = <<<html
         <div class="{$class}">
@@ -172,15 +173,9 @@ function embed_sgf($id) { # {{{
 } # }}}
 
 function prepare_eidogo_markup($content) { # {{{
-    # For [sgf] tags with content
     $content = preg_replace(
         '/\s*\[sgf(.*?)\](.*?)\[\/sgf\]\s*/sie',
         'prepare_sgf("$1", "$2")', $content);
-
-    # For empty [sgf] tags
-    $content = preg_replace(
-        '/\s*\[sgf\s(.*?)\]\s*/sie',
-        'prepare_sgf("$1")', $content);
 
     return $content;
 } # }}}
@@ -204,8 +199,8 @@ function embed_eidogo_markup($content) { # {{{
 function eidogo_head() { # {{{
     $wpu = WP_PLUGIN_URL;
     echo <<<html
-    <link rel="stylesheet" media="all" type="text/css" href="{$wpu}/wp-eidogo/wp-eidogo.css" />
-    <link rel="stylesheet" media="all" type="text/css" href="{$wpu}/wp-eidogo/eidogo-player-1.2/player/css/player.css" />
+    <link rel="stylesheet" media="all" type="text/css" href="{$wpu}/eidogo-for-wordpress/wp-eidogo.css" />
+    <link rel="stylesheet" media="all" type="text/css" href="{$wpu}/eidogo-for-wordpress/eidogo-player-1.2/player/css/player.css" />
     <script type="text/javascript">
         var broken_browser = false;
     </script>
@@ -214,7 +209,7 @@ function eidogo_head() { # {{{
         broken_browser = true;
     </script>
     <![endif]-->
-    <script type="text/javascript" src="{$wpu}/wp-eidogo/eidogo-player-1.2/player/js/all.compressed.js"></script>
+    <script type="text/javascript" src="{$wpu}/eidogo-for-wordpress/eidogo-player-1.2/player/js/all.compressed.js"></script>
 html;
 } # }}}
 
