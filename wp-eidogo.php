@@ -3,7 +3,7 @@
 Plugin Name: EidoGo for WordPress
 Plugin URI: http://www.fortmyersgo.org/eidogo-for-wordpress/
 Description: EidoGo for WordPress makes it easy to embed SGF files in your WordPress-powered blog with the EidoGo SGF viewer and editor.
-Version: 0.7.1
+Version: 0.7.2
 Author: Thomas Schumm
 Author URI: http://www.fortmyersgo.org/
 */
@@ -155,16 +155,19 @@ function prepare_sgf($params, $sgf_data="", $theme='compact') { # {{{
 javascript;
 
     } else {
-        $player_js = "alert('Unknown wp-eidogo theme {$theme}.');";
+        $unknown_theme = sprintf(__('Unknown wp-eidogo theme "%s".'), $theme);
+        $player_js = 'alert(' . json_encode($unknown_theme) . ');';
     }
 
     $class = 'wp-eidogo wp-eidogo-' . $theme;
     if ($params['class'])
         $class .= ' ' . $params['class'];
 
-    $ie6_warning = json_encode('<p class="ie6warning">Internet Explorer 6 is
-        not currently supported by the EidoGo for WordPress plugin. Please, <a
-        href="http://www.getfirefox.com/">get a real web browser</a>.</p>');
+    $ie6_warning = json_encode('<p class="ie6warning">' .  __(
+        'Internet Explorer 6 is not currently supported by the EidoGo for
+        WordPress plugin. Please, <a href="http://www.getfirefox.com/">get a
+        real web browser</a>.') .
+        '</p>');
 
     $sgf_prepared_markup[$sgf_count] = <<<html
         <div class="{$class}">

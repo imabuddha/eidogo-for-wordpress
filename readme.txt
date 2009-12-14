@@ -1,4 +1,4 @@
-=== Plugin Name ===
+=== EidoGo for WordPress ===
 Contributors: fwiffo
 Tags: widget, go, weiqi, baduk
 Requires at least: Unknown
@@ -60,7 +60,7 @@ will be disabled, however.
 = How do I add a problem? =
 
 Specify `[sgf theme="problem"]` to activate EidoGo's problem mode. In problem
-mode iframes are not necessary nor are used. For maximum usefullness I
+mode iframes are not necessary, nor are used. For maximum usefullness I
 recommend putting comments at the end of each branch indicating if the branch
 is correct or incorrect, otherwise EidoGo gives no indication.
 
@@ -86,7 +86,7 @@ left of the screen instead of the right or something).
 
 [Yep.](http://www.fortmyersgo.org/eidogo-for-wordpress/)
 
-= I want to tweak the layout within my theme, what's the markup look like? =
+= I want to tweak the layout within my theme; what's the markup look like? =
 
 It's pretty simple:
 
@@ -124,6 +124,9 @@ version fo Firefox, Chrome, IE 7 and IE 8 so far.
 2. A couple tsumego
 
 == Changelog ==
+
+= 0.7.2 =
+* Preparing for i18n
 
 = 0.7.1 =
 * Adding copyright and license information
