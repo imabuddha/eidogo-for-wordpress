@@ -118,6 +118,15 @@ Chrome, Opera, Safari and Internet Explorer (which means pretty much any Gecko
 or KHTML browsers are probably covered). I've tested with various recent
 version fo Firefox, Chrome, IE 7 and IE 8 so far.
 
+= I'm getting an error message and I have PHP 4 =
+
+Right now, PHP 5 is required and I don't have a PHP 4 setup to test with.
+Sorry. If you feel like writing a patch, I'll take a look.
+
+= I'm having some other problem =
+
+Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
+
 == Screenshots ==
 
 1. EidoGo embedded with the "full" theme
@@ -126,7 +135,8 @@ version fo Firefox, Chrome, IE 7 and IE 8 so far.
 == Changelog ==
 
 = 0.7.2 =
-* Preparing for i18n
+* Preparing strings for i18n
+* Closer conformance to official WordPress coding style
 
 = 0.7.1 =
 * Adding copyright and license information

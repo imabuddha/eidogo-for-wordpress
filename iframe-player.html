@@ -1,43 +1,43 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>EidoGo Player</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>EidoGo Player</title>
 
-    <style type="text/css">
-    body, html {
-        margin: 0;
-        padding: 0;
-        border: 0;
-        overflow: hidden;
-    }
-    </style>
-    <link rel="stylesheet" media="all" type="text/css" href="eidogo-player-1.2/player/css/player.css" />
-    <link rel="stylesheet" media="all" type="text/css" href="wp-eidogo.css" />
+	<style type="text/css">
+	body, html {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		overflow: hidden;
+	}
+	</style>
+	<link rel="stylesheet" media="all" type="text/css" href="eidogo-player-1.2/player/css/player.css" />
+	<link rel="stylesheet" media="all" type="text/css" href="wp-eidogo.css" />
 
-    <script type="text/javascript" src="eidogo-player-1.2/player/js/all.compressed.js"></script>
+	<script type="text/javascript" src="eidogo-player-1.2/player/js/all.compressed.js"></script>
 
 </head>
 <body>
-    <div id="player-container"></div>
-    <script type="text/javascript"><!--
+	<div id="player-container"></div>
+	<script type="text/javascript"><!--
 
-    // Get the config from the parent window
-    var sgfContainerId = 'player-container-' + window.location.hash.substring(1);
-    var config = parent.document.getElementById(sgfContainerId).eidogoConfig;
+	// Get the config from the parent window
+	var sgfContainerId = 'player-container-' + window.location.hash.substring(1);
+	var config = parent.document.getElementById(sgfContainerId).eidogoConfig;
 
-    // EidoGo tests config.loadPath against "instanceof Array". Because we're
-    // getting the config from the parent window and javascript is weird, that
-    // test fails (it's "instance of parent.Array"). Using foo.slice(0) gives
-    // us an Array in Firefox, but in IE, it just gives us another
-    // parent.Array. Using Array.prototype, however, seems to work.
-    if (config.loadPath && config.loadPath instanceof parent.Array)
-        config.loadPath = Array.prototype.slice.call(config.loadPath);
+	// EidoGo tests config.loadPath against "instanceof Array". Because we're
+	// getting the config from the parent window and javascript is weird, that
+	// test fails (it's "instance of parent.Array"). Using foo.slice(0) gives
+	// us an Array in Firefox, but in IE, it just gives us another
+	// parent.Array. Using Array.prototype, however, seems to work.
+	if (config.loadPath && config.loadPath instanceof parent.Array)
+		config.loadPath = Array.prototype.slice.call(config.loadPath);
 
-    // Create the player in the given container
-    config.container = "player-container";
-    var player = new eidogo.Player(config);
+	// Create the player in the given container
+	config.container = "player-container";
+	var player = new eidogo.Player(config);
 
-    --></script>
+	--></script>
 </body>
 </html>
