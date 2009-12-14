@@ -3,7 +3,7 @@ Contributors: fwiffo
 Tags: widget, go, weiqi, baduk
 Requires at least: Unknown
 Tested up to: 2.8.6
-Stable tag: 0.7
+Stable tag: 0.7.1
 
 EidoGo for WordPress makes it easy to embed SGF files in your WordPress-powered
 blog with the EidoGo SGF viewer and editor.
@@ -74,10 +74,9 @@ You can specify a caption for the EidoGo instance with `caption="Caption"`.
 You can link the caption to some url with `href="http://www.example.com/"` if
 you, for example, want to link to some discussion of the game.
 
-You can specify the "loadPath" parameter for EidoGo with
-`loadPath="something"` if you understand how to use that. As a shortcut for
-jumping to a move number in the main branch, you can specify `moveNumber="72"`
-or some such.
+You can specify the `loadPath` parameter for EidoGo with `loadPath="something"`
+if you understand how to use that. As a shortcut for jumping to a move number
+in the main branch, you can specify `moveNumber="72"` or some such.
 
 You can specify `class="className"` if you want to add a CSS class to the
 containing element (useful if you want to, for example, align a problem to the
@@ -126,6 +125,9 @@ version fo Firefox, Chrome, IE 7 and IE 8 so far.
 
 == Changelog ==
 
+= 0.7.1 =
+* Adding copyright and license information
+
 = 0.7 =
 * Initial public release.
 
@@ -147,3 +149,20 @@ This is the first public release.
 * Expose more of EidoGo's options to the embed tag syntax
 * Integrate with the file uploading of WordPress (e.g. so embedding an SGF
   file is as simple as embedding an image in a post)
+
+== Legal ==
+
+Copyright &copy; 2009 Thomas Schumm
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program. If not, see <http://www.gnu.org/licenses/>.
