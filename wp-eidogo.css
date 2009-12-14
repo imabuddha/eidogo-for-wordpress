@@ -1,0 +1,183 @@
+/* Styles for extra stuff */
+.wp-eidogo {
+    width: 423px;
+}
+
+.wp-eidogo iframe {
+    width: 423px;
+    height: 621px;
+    border: 0;
+    overflow: hidden;
+}
+
+.wp-eidogo pre {
+    display: none;
+}
+
+.wp-eidogo-full {
+    width: 720px;
+}
+
+.wp-eidogo-full iframe {
+    width: 720px;
+    height: 600px;
+}
+
+/* Styles for more compact thing... */
+.eidogo-player.theme-full {
+    width: 710px !important;
+}
+
+.eidogo-player.theme-full .controls-container {
+    width: 285px !important;
+}
+
+.eidogo-player.theme-full .move-number {
+    left: 177px !important;
+    top: 10px !important;
+    width: 59px;
+    height: 19px;
+    line-height: 19px;
+    padding: 0;
+    text-align: center;
+}
+
+.eidogo-player.theme-full .controls {
+    padding-left: 5px !important;
+}
+
+.eidogo-player.theme-full .controls .control {
+    margin-left: -1px !important;
+}
+
+.eidogo-player.theme-full .nav-slider {
+    width: 275px !important;
+}
+
+.eidogo-player.theme-full .variations-container {
+    width: 250px !important;
+}
+
+.eidogo-player.theme-full .tools-container {
+    width: 275px !important;
+}
+
+.eidogo-player.theme-full .comments {
+    width: 269px !important;
+    height: 244px !important;
+    border: 0 !important;
+}
+
+.eidogo-player.theme-full .comments-edit {
+    width: 285px !important;
+    height: 269px !important;
+}
+
+.eidogo-player.theme-full .comments-edit-ta {
+    width: 285px !important;
+    margin: 0 !important;
+    border: 0 !important;
+    height: 269px !important;
+}
+
+.eidogo-player.theme-full .comments-edit-done, .eidogo-player.theme-full .game-info-edit-done {
+    width: 271px !important;
+    margin-right: 0 !important;
+}
+
+.eidogo-player.theme-full .game-info-edit {
+    width: 285px !important;
+    height: 299px !important;
+}
+
+.eidogo-player.theme-full .game-info-edit-form {
+    padding: 10px 10px 0 10px !important;
+    height: 259px !important;
+}
+
+.eidogo-player.theme-full .game-info-edit-form input {
+    width: 150px !important;
+}
+
+.eidogo-player.theme-full .game-info-edit-form table {
+    font-size: 100%;
+}
+
+.eidogo-player.theme-full .nav-tree-container {
+    width: 285px !important;
+    height: 120px !important;
+}
+
+.eidogo-player.theme-full .nav-tree-container ul {
+    padding-bottom: 0.1px !important;
+}
+
+.eidogo-player.theme-full .nav-tree-container ul li:last-child {
+    margin-bottom: -19px !important;
+}
+
+.eidogo-player.theme-full .options {
+    width: 289px !important;
+}
+
+.eidogo-player.theme-full .options a {
+    width: 127px !important;
+    margin-bottom: 0px !important;
+    margin-top: 0px !important;
+}
+
+.eidogo-player.theme-full .info .game {
+    height: 106px !important;
+    overflow: auto;
+    clear: left;
+}
+
+.eidogo-player.theme-full .search-container {
+    width: 275px !important;
+    border: 0 !important;
+    height: 254px !important;
+    padding: 15px 5px 30px !important;
+    overflow-x: hidden !important;
+}
+
+.eidogo-player.theme-full .search-container .search-result .pw {
+    width: 65px !important;
+}
+
+.eidogo-player.theme-full .search-container .search-result .pb {
+    width: 65px !important;
+}
+
+.eidogo-player.theme-full .search-container .search-result .re {
+    width: 30px !important;
+}
+
+.eidogo-player.theme-full .search-container .search-result .dt {
+    width: 55px !important;
+    text-align: right;
+}
+
+/* For problem mode */
+.wp-eidogo-problem .comments {
+    height: 36px !important;
+}
+
+.wp-eidogo-problem {
+    width: auto;
+    display: inline;
+    float: right;
+    text-align: right;
+    margin: 0 0 0 10px;
+}
+
+.wp-eidogo-problem .wp-caption-text {
+    padding: 0 1px;
+}
+
+.wp-eidogo-problem .comments {
+    padding: 4px !important;
+}
+
+.wp-eidogo-problem .comments .comment-status {
+    margin-bottom: 0;
+}

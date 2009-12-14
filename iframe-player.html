@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>EidoGo Player</title>
+
+    <style type="text/css">
+    body, html {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        overflow: hidden;
+    }
+    </style>
+    <link rel="stylesheet" media="all" type="text/css" href="eidogo-player-1.2/player/css/player.css" />
+    <link rel="stylesheet" media="all" type="text/css" href="wp-eidogo.css" />
+
+    <script type="text/javascript" src="eidogo-player-1.2/player/js/all.compressed.js"></script>
+
+</head>
+<body>
+    <div id="player-container"></div>
+    <script type="text/javascript"><!--
+    function getUrlParam(name) {
+        name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+        var regexS = "[\\?&]"+name+"=([^&#]*)";
+        var regex = new RegExp( regexS );
+        var results = regex.exec(window.location.href);
+        if( results == null )
+            return "";
+        else
+            return results[1];
+    }
+
+    var sgfContainerId = 'player-container-' + getUrlParam('id');
+    var config = parent.document.getElementById(sgfContainerId).eidogoConfig;
+    config.container = "player-container";
+    // document.getElementById(config.container).className = 'theme-' + config.theme;
+    var player = new eidogo.Player(config);
+    --></script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+diff -r -U 3 /home/tom/tarballs/eidogo-player-1.2/player/js/all.compressed.js eidogo-player-1.2/player/js/all.compressed.js
+--- /home/tom/tarballs/eidogo-player-1.2/player/js/all.compressed.js	2008-04-12 03:13:49.000000000 -0400
++++ eidogo-player-1.2/player/js/all.compressed.js	2009-09-16 19:00:07.000000000 -0400
+@@ -2206,7 +2206,7 @@
+ if(_d6>_d8){
+ setTimeout(function(){
+ _4(_2("search-more"),"click",function(e){
+-this.loadSearch(_ce,_c7[2]+"x"+_c7[3],_c9,"corner",ret.offset+51);
++this.loadSearch(_ce,_c7[2]+"x"+_c7[3],_c9,"corner",ret.offset+50);
+ _7(e);
+ }.bind(this));
+ }.bind(this),0);
+@@ -2706,7 +2706,7 @@
+ location.href=this.downloadUrl+this.gameName;
+ }else{
+ if(_c){
+-location.href="data:text/plain,"+encodeURIComponent(this.cursor.getGameRoot().toSgf());
++location.href="data:application/x-go-sgf,"+encodeURIComponent(this.cursor.getGameRoot().toSgf());
+ }
+ }
+ },save:function(evt){
+diff -r -U 3 /home/tom/tarballs/eidogo-player-1.2/player/js/player.js eidogo-player-1.2/player/js/player.js
+--- /home/tom/tarballs/eidogo-player-1.2/player/js/player.js	2008-04-12 03:13:49.000000000 -0400
++++ eidogo-player-1.2/player/js/player.js	2009-09-16 18:57:26.000000000 -0400
+@@ -1479,7 +1479,7 @@
+                 setTimeout(function() {
+                     addEvent(byId("search-more"), "click", function(e) {
+                         this.loadSearch(quadrant, bounds[2] + "x" + bounds[3],
+-                            pattern, "corner", ret.offset + 51);
++                            pattern, "corner", ret.offset + 50);
+                         stopEvent(e);
+                     }.bind(this));
+                 }.bind(this), 0);
+@@ -2055,7 +2055,7 @@
+             }
+             location.href = this.downloadUrl + this.gameName;
+         } else if (isMoz) {
+-            location.href = "data:text/plain," +
++            location.href = "data:application/x-go-sgf," +
+                 encodeURIComponent(this.cursor.getGameRoot().toSgf());
+         }
+     },
