@@ -115,8 +115,8 @@ real web browser.
 
 I intend to support current or reasonably recent versions of Firefox, Google
 Chrome, Opera, Safari and Internet Explorer (which means pretty much any Gecko
-or KHTML browsers are probably covered). I've tested with various recent
-version fo Firefox, Chrome, IE 7 and IE 8 so far.
+or KHTML browsers are probably covered). I've tested the plugin with various
+recent versions of Firefox, Chrome, IE 7 and IE 8 so far.
 
 = I'm getting an error message and I have PHP 4 =
 
@@ -137,6 +137,7 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 = 0.7.2 =
 * Preparing strings for i18n
 * Closer conformance to official WordPress coding style
+* Adding SGF mime type for media library
 
 = 0.7.1 =
 * Adding copyright and license information

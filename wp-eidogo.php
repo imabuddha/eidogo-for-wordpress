@@ -238,6 +238,13 @@ function wpeidogo_head() { # {{{
 html;
 } # }}}
 
+function wpeidogo_mimetypes($mimes=null) {
+	if (is_null($mimes))
+		$mimes = array();
+	$mimes['sgf'] = 'application/x-go-sgf';
+	return $mimes;
+}
+
 # We want to embed the SGF data that is wholy unmolested by wpautop and other
 # built-in wordpress functions, so we need to do our parsing BEFORE any such
 # filters are called. However, we also want to avoid such filters modifying our
@@ -251,5 +258,8 @@ add_filter('comment_text', 'wpeidogo_embed_markup', 99);
 
 # For necessary stylesheets and javascript files
 add_action('wp_head', 'wpeidogo_head');
+
+# Support for SGF files in media library
+add_filter('upload_mimes', 'wpeidogo_mimetypes');
 
 # vim:noet:ts=4
