@@ -3,7 +3,7 @@
 Plugin Name: EidoGo for WordPress
 Plugin URI: http://www.fortmyersgo.org/eidogo-for-wordpress/
 Description: EidoGo for WordPress makes it easy to embed SGF files in your WordPress-powered blog with the EidoGo SGF viewer and editor.
-Version: 0.8.1
+Version: 0.8.2
 Author: Thomas Schumm
 Author URI: http://www.fortmyersgo.org/
 */
@@ -56,10 +56,11 @@ class WpEidoGoPlugin {
 		# Support for SGF files in media library
 		add_filter('upload_mimes', array(&$this, 'sgf_mimetypes'));
 		add_filter('post_mime_types', array(&$this, 'add_media_tab'));
-		add_filter('ext2type', array(&$this, 'sgf_extension')); # ?
+		add_filter('ext2type', array(&$this, 'sgf_extension'));
+		add_filter('wp_mime_type_icon', array(&$this, 'sgf_icon'), 10, 3);
 		add_filter('attachment_fields_to_edit', array(&$this, 'sgf_media_form'), 10, 2);
 		add_filter('media_send_to_editor', array(&$this, 'sgf_send_to_editor'), 10, 3);
-		add_filter('wp_mime_type_icon', array(&$this, 'sgf_icon'), 10, 3);
+		add_filter('attachment_fields_to_save', array(&$this, 'save_sgf_info'), 10, 3);
 	} # }}}
 
 	/* HTML header */
@@ -111,6 +112,11 @@ html;
 			'html'  => image_align_input_fields($post, get_option('image_default_align')),
 		);
 
+		$meta = get_post_custom($post->ID);
+		if (!$meta['_wpeidogo_theme']) $meta['_wpeidogo_theme'] = array('compact');
+		if (!$meta['_wpeidogo_embed_method']) $meta['_wpeidogo_embed_method'] = array('iframe');
+		if (!$meta['_wpeidogo_problem_color']) $meta['_wpeidogo_problem_color'] = array('auto');
+
 		$fmime = '<input type="hidden" name="attachments['.$post->ID.'][mime_type]"
 				value="'.htmlspecialchars($post->post_mime_type).'" />';
 		$fsrc = '<input type="hidden" name="attachments['.$post->ID.'][src]"
@@ -120,7 +126,8 @@ html;
 		$form_fields['eidogo_theme'] = array(
 			'label' => __('Theme'),
 			'input' => 'html',
-			'html' => $fmime . $fsrc . $this->simple_radio('eidogo_theme', $themes, $post->ID, 'compact'),
+			'html' => $fmime . $fsrc .
+				$this->simple_radio('eidogo_theme', $themes, $post->ID, $meta['_wpeidogo_theme'][0]),
 		);
 
 		# TODO: Hide embed_method for problem mode, and show problem color auto/black/white choice instead
@@ -129,19 +136,31 @@ html;
 		$form_fields['embed_method'] = array(
 			'label' => __('Embed Method'),
 			'input' => 'html',
-			'html' => $this->simple_radio('embed_method', $methods, $post->ID, 'iframe'),
+			'html' => $this->simple_radio('embed_method', $methods, $post->ID, $meta['_wpeidogo_embed_method'][0]),
 		);
 
 		$colors = array('auto' => 'Auto', 'B' => 'Black', 'W' => 'White');
 		$form_fields['problem_color'] = array(
 			'label' => __('Problem Color'),
 			'input' => 'html',
-			'html' => $this->simple_radio('problem_color', $colors, $post->ID, 'auto'),
+			'html' => $this->simple_radio('problem_color', $colors, $post->ID, $meta['_wpeidogo_problem_color'][0]),
 		);
 
-		# TODO: Save these options as metadata or whatever and reuse on attachment viewing page
-
 		return $form_fields;
+	} # }}}
+
+	function save_sgf_info($post, $input) { # {{{
+		if (!$input['mime_type'] || $input['mime_type'] != $this->sgf_mime_type)
+			return $post;
+
+		if (!$post['ID'])
+			return $post;
+
+		update_post_meta($post['ID'], '_wpeidogo_theme', $input['eidogo_theme']);
+		update_post_meta($post['ID'], '_wpeidogo_embed_method', $input['embed_method']);
+		update_post_meta($post['ID'], '_wpeidogo_problem_color', $input['problem_color']);
+
+		return $post;
 	} # }}}
 
 	function sgf_send_to_editor($html, $id, $post) { # {{{
@@ -162,7 +181,7 @@ html;
 		if ($theme && $theme != 'compact')
 			$params .= ' theme="'.htmlspecialchars($theme).'"';
 
-		if ($post['problem_color'] && $post['problem_color'] != 'auto')
+		if ($theme == 'problem' && $post['problem_color'] && $post['problem_color'] != 'auto')
 			$params .= ' problemColor="'.htmlspecialchars($post['problem_color']).'"';
 
 		if ($post['post_excerpt'])

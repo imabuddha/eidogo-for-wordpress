@@ -1,7 +1,7 @@
 === EidoGo for WordPress ===
 Contributors: fwiffo
 Donate link: href="http://www.amazon.com/gp/redirect.html?ie=UTF8&location=http%3A%2F%2Fwww.amazon.com%2Fgp%2Fregistry%2Fwishlist%2F3ETA9NVNRTZ4P&tag=fomygocl-20&linkCode=ur2&camp=1789&creative=390957
-Tags: widget, go, weiqi, baduk
+Tags: widget, go, weiqi, baduk, sgf, EidoGo
 Requires at least: 2.5 (maybe?)
 Tested up to: 2.8.6
 Stable tag: 0.8.1
@@ -72,7 +72,7 @@ is correct or incorrect, otherwise EidoGo gives no indication.
 
 It's possible that EidoGo won't correctly determine which color should be
 automatically played (it tries to look for a `PL[]` entry in the SGF file),
-but you can override it by specifing, e.g. [`sgf problemColor="B"]` explicitly.
+but you can override it by specifing, e.g. `[sgf problemColor="B"]` explicitly.
 
 = What other parameters are there? =
 
@@ -106,10 +106,11 @@ It's pretty simple:
         <p class="wp-caption-text">[caption]</p>
     </div>
 
-The default styles will center full and compact EidoGo instances and will
-float problems to the right, but you'll probably want to add a couple lines to
-your theme's stylesheet to match things like margins with the rest of your
-layout.
+The included styles will align EidoGo instances with the `alignleft`,
+`aligncenter` and `alignright` classes the same as one would expect for
+images, but you may want to add a few lines to your theme's stylesheet to
+match things like margins with the rest of your layout or to change how
+instances are laid out by default when no alignment has been specified.
 
 = I'm getting an error message in Internet Explorer 6 (or older) telling me to upgrade. =
 
@@ -139,6 +140,9 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 2. A couple tsumego
 
 == Changelog ==
+
+= 0.8.2
+* Embedding preferences are now saved with SGF attachments
 
 = 0.8.1 =
 * Adding SGF icon
@@ -180,9 +184,6 @@ Some stuff I plan to do in the future:
 * Error checking for old versions of PHP or Wordpress
 * Allow on-server editing of uploaded SGF files from admin screen with EidoGo
   (it'll be cool!)
-* Add aligment option
-* Improve admin screen styles
-* Save embed method and theme with uploaded SGF files
 * Make it easy to enable SGF embedding on attachment page in WordPress theme
 * Add styles to indicate right/wrong answers to problems
 
