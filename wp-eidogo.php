@@ -25,7 +25,7 @@ Author URI: http://www.fortmyersgo.org/
 
 */
 
-class WpEidoGoPlugin { # {{{
+class WpEidoGoPlugin {
 
 	var $sgf_count = 0;
 	var $sgf_prepared_markup = array();
@@ -51,6 +51,7 @@ class WpEidoGoPlugin { # {{{
 
 		# For necessary stylesheets and javascript files
 		add_action('wp_head', array(&$this, 'eidogo_head_tags'));
+		add_action('admin_head', array(&$this, 'eidogo_head_tags_admin'));
 
 		# Support for SGF files in media library
 		add_filter('upload_mimes', array(&$this, 'sgf_mimetypes'));
@@ -78,42 +79,64 @@ class WpEidoGoPlugin { # {{{
 html;
 	} # }}}
 
+	function eidogo_head_tags_admin() { # {{{
+		echo <<<html
+		<link rel="stylesheet" media="all" type="text/css" href="{$this->plugin_url}/wp-eidogo-admin.css" />
+html;
+	} # }}}
+
 	/* Media library */
+	function simple_radio($field_name, $options, $post_id, $current=null) { # {{{
+		# Very simple code for generating radio button groups; assumes
+		# $field_name and option keys don't have spaces or anything funny
+		$name = "attachments[$post_id][$field_name]";
+		$id_prefix = "wpeidogo-$field_name-$post_id";
+		$elements = array();
+		foreach ($options as $key => $label) {
+			$id = "$id_prefix-$key";
+			$checked = ($current == $key ? " checked='checked'" : '');
+			$elements[] = "<input type='radio' name='$name' id='$id' value='$key'$checked />" .
+				"<label for='$id'>$label</label>";
+		}
+		return join("\n", $elements);
+	} # }}}
+
 	function sgf_media_form($form_fields, $post=null) { # {{{
 		if ($post->post_mime_type != $this->sgf_mime_type)
 			return $form_fields;
 
-		# TODO: Add alignment (reuse same function image form uses)
+		$form_fields['align'] = array(
+			'label' => __('Alignment'),
+			'input' => 'html',
+			'html'  => image_align_input_fields($post, get_option('image_default_align')),
+		);
 
+		$fmime = '<input type="hidden" name="attachments['.$post->ID.'][mime_type]"
+				value="'.htmlspecialchars($post->post_mime_type).'" />';
+		$fsrc = '<input type="hidden" name="attachments['.$post->ID.'][src]"
+				value="'.htmlspecialchars($post->guid).'" />';
+
+		$themes = array('compact' => 'Compact', 'full' => 'Full', 'problem' => 'Problem');
 		$form_fields['eidogo_theme'] = array(
 			'label' => __('Theme'),
 			'input' => 'html',
-			'html' => '
-				<input type="radio" name="attachments['.$post->ID.'][eidogo_theme]"
-					id="wpeidogo-theme-compact-'.$post->ID.'" value="compact" checked="checked"
-					/><label for="wpeidogo-theme-compact-'.$post->ID.'">Compact (default)</label>
-				<input type="radio" name="attachments['.$post->ID.'][eidogo_theme]"
-					id="wpeidogo-theme-full-'.$post->ID.'" value="full"
-					/><label for="wpeidogo-theme-full-'.$post->ID.'">Full</label>
-				<input type="radio" name="attachments['.$post->ID.'][eidogo_theme]"
-					id="wpeidogo-theme-problem-'.$post->ID.'" value="problem"
-					/><label for="wpeidogo-theme-problem-'.$post->ID.'">Problem</label>',
+			'html' => $fmime . $fsrc . $this->simple_radio('eidogo_theme', $themes, $post->ID, 'compact'),
 		);
 
 		# TODO: Hide embed_method for problem mode, and show problem color auto/black/white choice instead
 
+		$methods = array('iframe' => 'Iframe', 'inline' => 'Inline');
 		$form_fields['embed_method'] = array(
 			'label' => __('Embed Method'),
 			'input' => 'html',
-			'html' => '
-				<input type="hidden" name="attachments['.$post->ID.'][mime_type]" value="'.htmlspecialchars($post->post_mime_type).'" />
-				<input type="hidden" name="attachments['.$post->ID.'][src]" value="'.htmlspecialchars($post->guid).'" />
-				<input type="radio" name="attachments['.$post->ID.'][embed_method]"
-					id="wpeidogo-embed_method-iframe-'.$post->ID.'" value="iframe" checked="checked"
-					/><label for="wpeidogo-embed_method-iframe-'.$post->ID.'">Iframe (recommended)</label>
-				<input type="radio" name="attachments['.$post->ID.'][embed_method]"
-					id="wpeidogo-embed_method-inline-'.$post->ID.'" value="inline"
-					/><label for="wpeidogo-embed_method-inline-'.$post->ID.'">Inline</label>',
+			'html' => $this->simple_radio('embed_method', $methods, $post->ID, 'iframe'),
+		);
+
+		$colors = array('auto' => 'Auto', 'B' => 'Black', 'W' => 'White');
+		$form_fields['problem_color'] = array(
+			'label' => __('Problem Color'),
+			'input' => 'html',
+			'html' => $this->simple_radio('problem_color', $colors, $post->ID, 'auto'),
 		);
 
 		# TODO: Save these options as metadata or whatever and reuse on attachment viewing page
@@ -124,6 +147,7 @@ html;
 	function sgf_send_to_editor($html, $id, $post) { # {{{
 		if (!$post['mime_type'] || $post['mime_type'] != $this->sgf_mime_type)
 			return $html;
+
 		$theme = $post['eidogo_theme'];
 		if (!$theme)
 			$theme = "compact";
@@ -131,14 +155,25 @@ html;
 			$theme .= "-inline";
 
 		$params = '';
+
 		if ($post['src'])
 			$params .= ' sgfUrl="'.htmlspecialchars($post['src']).'"';
+
 		if ($theme && $theme != 'compact')
 			$params .= ' theme="'.htmlspecialchars($theme).'"';
+
+		if ($post['problem_color'] && $post['problem_color'] != 'auto')
+			$params .= ' problemColor="'.htmlspecialchars($post['problem_color']).'"';
+
 		if ($post['post_excerpt'])
 			$params .= ' caption="'.htmlspecialchars($post['post_excerpt']).'"';
+
 		if ($post['url'])
 			$params .= ' href="'.htmlspecialchars($post['url']).'"';
+
+		if ($post['align'] && $post['align'] != 'none')
+			$params .= ' class="align'.htmlspecialchars($post['align']).'"';
+
 		return '[sgf'.$params.'][/sgf]';
 	} # }}}
 
@@ -357,7 +392,7 @@ html;
 		return $content;
 	} # }}}
 
-} # }}}
+}
 
 $wpeidogo_plugin =& new WpEidoGoPlugin();
 # TODO: Useful error handling if PHP or WordPress versions are too old

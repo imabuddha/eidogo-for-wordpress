@@ -1,9 +1,10 @@
 === EidoGo for WordPress ===
 Contributors: fwiffo
+Donate link: href="http://www.amazon.com/gp/redirect.html?ie=UTF8&location=http%3A%2F%2Fwww.amazon.com%2Fgp%2Fregistry%2Fwishlist%2F3ETA9NVNRTZ4P&tag=fomygocl-20&linkCode=ur2&camp=1789&creative=390957
 Tags: widget, go, weiqi, baduk
 Requires at least: 2.5 (maybe?)
 Tested up to: 2.8.6
-Stable tag: 0.8
+Stable tag: 0.8.1
 
 EidoGo for WordPress makes it easy to embed SGF files in your WordPress-powered
 blog with the EidoGo SGF viewer and editor.
@@ -142,6 +143,7 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 = 0.8.1 =
 * Adding SGF icon
 * More options for embedding
+* Adding aligment option (works like image alignment)
 
 = 0.8 =
 * Preparing strings for i18n

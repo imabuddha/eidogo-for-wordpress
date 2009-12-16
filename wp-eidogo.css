@@ -1,15 +1,17 @@
 /* Styles for player containers */
-.wp-eidogo iframe {
+.wp-eidogo .player-container, .wp-eidogo iframe {
 	border: 0;
 	overflow: hidden;
 }
 
-.wp-eidogo-compact, .wp-eidogo-compact iframe {
+.wp-eidogo-compact .player-container, .wp-eidogo-compact iframe,
+.wp-eidogo-compact-inline .player-container, .wp-eidogo-compact-inline iframe {
 	width: 423px;
 	height: 621px;
 }
 
-.wp-eidogo-full, .wp-eidogo-full iframe {
+.wp-eidogo-full .player-container, .wp-eidogo-full iframe,
+.wp-eidogo-full-inline .player-container, .wp-eidogo-full-inline iframe {
 	width: 720px;
 	height: 600px;
 }
@@ -160,13 +162,28 @@
 
 /* Basic layout within the page */
 .wp-eidogo  {
-	margin: 1.25em auto;
+	margin: 1.25em 0;
 }
 
-.wp-eidogo-problem {
+.wp-eidogo.alignleft {
+	display: inline; /* IE6 fix for float margins */
+	float: left;
+	margin: 0 10px 10px 0;
+}
+
+.wp-eidogo.alignright {
 	display: inline; /* IE6 fix for float margins */
 	float: right;
-	margin: 0 0 0 10px;
+	margin: 0 0 10px 10px;
+}
+
+.wp-eidogo.aligncenter {
+	clear: both;
+}
+
+.wp-eidogo.aligncenter .player-container,
+.wp-eidogo-problem.aligncenter .eidogo-player {
+	margin: 0 auto;
 }
 
 /* vim:noet:ts=4
