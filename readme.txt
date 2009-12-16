@@ -1,7 +1,7 @@
 === EidoGo for WordPress ===
 Contributors: fwiffo
 Tags: widget, go, weiqi, baduk
-Requires at least: Unknown
+Requires at least: 2.5 (maybe?)
 Tested up to: 2.8.6
 Stable tag: 0.7.1
 
@@ -134,10 +134,10 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 
 == Changelog ==
 
-= 0.7.2 =
+= 0.8 =
 * Preparing strings for i18n
 * Closer conformance to official WordPress coding style
-* Adding SGF mime type for media library
+* Adding SGF embedding support to media library
 
 = 0.7.1 =
 * Adding copyright and license information
@@ -150,19 +150,25 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 = 0.7 =
 This is the first public release.
 
+= 0.8 =
+SGF support is now integrated with the media library so adding SGF files is
+now much easier.
+
 == Roadmap ==
 
-* I plan to add a configuration screen for tweaking the default EidoGo
+Some stuff I plan to do in the future:
+
+* Add a configuration screen for tweaking the default EidoGo
   parameters
-* More browser testing
-* Cleaner code
 * Allow custom EidoGo themes and loading of custom stylesheets inside
   iframes
 * Add EidoGo's backend stuff like position search, progressive load, save to
   server, etc.
 * Expose more of EidoGo's options to the embed tag syntax
-* Integrate with the file uploading of WordPress (e.g. so embedding an SGF
-  file is as simple as embedding an image in a post)
+* More browser testing
+* Error checking for old versions of PHP or Wordpress
+* Allow on-server editing of uploaded SGF files from admin screen with EidoGo
+  (it'll be so cool!)
 
 == Legal ==
 
