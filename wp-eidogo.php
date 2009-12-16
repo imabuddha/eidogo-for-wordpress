@@ -61,12 +61,6 @@ class WpEidoGoPlugin { # {{{
 		add_filter('wp_mime_type_icon', array(&$this, 'sgf_icon'), 10, 3);
 	} # }}}
 
-	function sgf_icon($icon, $mime_type, $post_id) { # {{{
-		if ($mime_type != $this->sgf_mime_type)
-			return $icon;
-		return $this->plugin_url . '/default.png';
-	} # }}}
-
 	/* HTML header */
 	function eidogo_head_tags() { # {{{
 		echo <<<html
@@ -89,19 +83,7 @@ html;
 		if ($post->post_mime_type != $this->sgf_mime_type)
 			return $form_fields;
 
-		$form_fields['embed_method'] = array(
-			'label' => __('Embed Method'),
-			'input' => 'html',
-			'html' => '
-				<input type="hidden" name="attachments['.$post->ID.'][mime_type]" value="'.htmlspecialchars($post->post_mime_type).'" />
-				<input type="hidden" name="attachments['.$post->ID.'][src]" value="'.htmlspecialchars($post->guid).'" />
-				<input type="radio" name="attachments['.$post->ID.'][embed_method]"
-					id="wpeidogo-embed_method-iframe-'.$post->ID.'" value="iframe" checked="checked"
-					/><label for="wpeidogo-embed_method-iframe-'.$post->ID.'">Iframe (recommended)</label>
-				<input type="radio" name="attachments['.$post->ID.'][embed_method]"
-					id="wpeidogo-embed_method-inline-'.$post->ID.'" value="inline"
-					/><label for="wpeidogo-embed_method-inline-'.$post->ID.'">Inline</label>',
-		);
+		# TODO: Add alignment (reuse same function image form uses)
 
 		$form_fields['eidogo_theme'] = array(
 			'label' => __('Theme'),
@@ -118,8 +100,23 @@ html;
 					/><label for="wpeidogo-theme-problem-'.$post->ID.'">Problem</label>',
 		);
 
-		unset($form_fields['post_title']);
-		unset($form_fields['post_content']);
+		# TODO: Hide embed_method for problem mode, and show problem color auto/black/white choice instead
+
+		$form_fields['embed_method'] = array(
+			'label' => __('Embed Method'),
+			'input' => 'html',
+			'html' => '
+				<input type="hidden" name="attachments['.$post->ID.'][mime_type]" value="'.htmlspecialchars($post->post_mime_type).'" />
+				<input type="hidden" name="attachments['.$post->ID.'][src]" value="'.htmlspecialchars($post->guid).'" />
+				<input type="radio" name="attachments['.$post->ID.'][embed_method]"
+					id="wpeidogo-embed_method-iframe-'.$post->ID.'" value="iframe" checked="checked"
+					/><label for="wpeidogo-embed_method-iframe-'.$post->ID.'">Iframe (recommended)</label>
+				<input type="radio" name="attachments['.$post->ID.'][embed_method]"
+					id="wpeidogo-embed_method-inline-'.$post->ID.'" value="inline"
+					/><label for="wpeidogo-embed_method-inline-'.$post->ID.'">Inline</label>',
+		);
+
+		# TODO: Save these options as metadata or whatever and reuse on attachment viewing page
 
 		return $form_fields;
 	} # }}}
@@ -143,6 +140,14 @@ html;
 		if ($post['url'])
 			$params .= ' href="'.htmlspecialchars($post['url']).'"';
 		return '[sgf'.$params.'][/sgf]';
+	} # }}}
+
+	function sgf_icon($icon, $mime_type, $post_id) { # {{{
+		if ($mime_type != $this->sgf_mime_type)
+			return $icon;
+		# The filename must be the same as one of the default icons
+		# of the same dimensions or WordPress gets confused
+		return $this->plugin_url . '/default.png';
 	} # }}}
 
 	function sgf_extension($types) { # {{{

@@ -141,6 +141,7 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 
 = 0.8.1 =
 * Adding SGF icon
+* More options for embedding
 
 = 0.8 =
 * Preparing strings for i18n
@@ -176,7 +177,12 @@ Some stuff I plan to do in the future:
 * More browser testing
 * Error checking for old versions of PHP or Wordpress
 * Allow on-server editing of uploaded SGF files from admin screen with EidoGo
-  (it'll be so cool!)
+  (it'll be cool!)
+* Add aligment option
+* Improve admin screen styles
+* Save embed method and theme with uploaded SGF files
+* Make it easy to enable SGF embedding on attachment page in WordPress theme
+* Add styles to indicate right/wrong answers to problems
 
 == Legal ==
 
