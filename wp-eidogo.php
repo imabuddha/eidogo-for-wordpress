@@ -3,7 +3,7 @@
 Plugin Name: EidoGo for WordPress
 Plugin URI: http://www.fortmyersgo.org/eidogo-for-wordpress/
 Description: EidoGo for WordPress makes it easy to embed SGF files in your WordPress-powered blog with the EidoGo SGF viewer and editor.
-Version: 0.8
+Version: 0.8.1
 Author: Thomas Schumm
 Author URI: http://www.fortmyersgo.org/
 */
@@ -33,6 +33,7 @@ class WpEidoGoPlugin { # {{{
 
 	/* Initialization */
 	function WpEidoGoPlugin() { # {{{
+		$this->plugin_url = WP_PLUGIN_URL . '/eidogo-for-wordpress';
 		$this->setup_hooks();
 	} # }}}
 
@@ -57,14 +58,20 @@ class WpEidoGoPlugin { # {{{
 		add_filter('ext2type', array(&$this, 'sgf_extension')); # ?
 		add_filter('attachment_fields_to_edit', array(&$this, 'sgf_media_form'), 10, 2);
 		add_filter('media_send_to_editor', array(&$this, 'sgf_send_to_editor'), 10, 3);
+		add_filter('wp_mime_type_icon', array(&$this, 'sgf_icon'), 10, 3);
+	} # }}}
+
+	function sgf_icon($icon, $mime_type, $post_id) { # {{{
+		if ($mime_type != $this->sgf_mime_type)
+			return $icon;
+		return $this->plugin_url . '/default.png';
 	} # }}}
 
 	/* HTML header */
 	function eidogo_head_tags() { # {{{
-		$wpu = WP_PLUGIN_URL;
 		echo <<<html
-		<link rel="stylesheet" media="all" type="text/css" href="{$wpu}/eidogo-for-wordpress/wp-eidogo.css" />
-		<link rel="stylesheet" media="all" type="text/css" href="{$wpu}/eidogo-for-wordpress/eidogo-player-1.2/player/css/player.css" />
+		<link rel="stylesheet" media="all" type="text/css" href="{$this->plugin_url}/wp-eidogo.css" />
+		<link rel="stylesheet" media="all" type="text/css" href="{$this->plugin_url}/eidogo-player-1.2/player/css/player.css" />
 		<script type="text/javascript">
 			var broken_browser = false;
 		</script>
@@ -73,7 +80,7 @@ class WpEidoGoPlugin { # {{{
 			broken_browser = true;
 		</script>
 		<![endif]-->
-		<script type="text/javascript" src="{$wpu}/eidogo-for-wordpress/eidogo-player-1.2/player/js/all.compressed.js"></script>
+		<script type="text/javascript" src="{$this->plugin_url}/eidogo-player-1.2/player/js/all.compressed.js"></script>
 html;
 	} # }}}
 
@@ -172,8 +179,6 @@ html;
 	} # }}}
 
 	function prepare_sgf($matches, $theme='compact') { # {{{
-		$wpu = WP_PLUGIN_URL;
-
 		list($whole_tag, $params, $sgf_data) = $matches;
 
 		# Clean up the SGF data
@@ -276,7 +281,7 @@ html;
 			$player_js = "var wpeidogo_player{$this->sgf_count} = new eidogo.Player({$js_config});";
 
 		} elseif ($embed_method == 'iframe') {
-			$iframe = json_encode('<iframe src="'.$wpu.'/eidogo-for-wordpress/iframe-player.html#'.$this->sgf_count.
+			$iframe = json_encode('<iframe src="'.$this->plugin_url.'/iframe-player.html#'.$this->sgf_count.
 				'" frameborder="0" width="'.$frame_w.'" height="'.$frame_h.'" scrolling="no"></iframe>');
 			$player_js = <<<javascript
 				var playerContainer{$this->sgf_count} = document.getElementById('player-container-{$this->sgf_count}');

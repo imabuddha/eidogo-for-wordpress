@@ -32,21 +32,17 @@ layout. See the FAQ section for details.
 
 = So, how do I embed an SGF File? =
 
-SGF is a text based format, so it's easy. Just open the SGF file in something
-like notepad, then copy and paste the SGF data between `[sgf][/sgf]` tags in a
-post, page or comment.
+EidoGo for WordPress integrates with the WordPress media library thingy, so
+you can embed an SGF file exactly the same way as you would an image - the
+plugin will insert the necessary tags for you automatically.
 
-For example, this will embed a blank 19x19 board:
-
-    `[sgf](;GM[1]FF[4]CA[UTF-8]SZ[19])[/sgf]`
-
-You can also upload the SGF file to your blog, and then embed it by URL:
+You can also embed an SGF file manually, for instance:
 
     `[sgf sgfUrl="/wp-content/uploads/2009/11/example.sgf"][/sgf]`
 
-Those examples embed EidoGo with the `"compact"` theme. If your blog has a wide
-enough layout, you can use the `"full"` theme which adds nice things like a
-variation tree, larger comment box, etc.
+By default EidoGo will be inserted with the `"compact"` theme. If your blog
+has a wide enough layout, you can use the `"full"` theme which adds nice
+things like a variation tree, larger comment box, etc.
 
     `[sgf theme="full" sgfUrl="/wp-content/uploads/2009/11/example.sgf"][/sgf]`
 
@@ -56,6 +52,15 @@ to navigate the game without stealing them from the user's browser. If you don't
 want to use iframes for some reason, you can specify themes of `"compact-inline"`
 or `"full-inline"` to embed the EidoGo instance directly.  Keyboard shortcuts
 will be disabled, however.
+
+Because SGF is a text based format you can also embed the SGF data directly in
+your post without uploading it as a separate file. Just open the SGF file in
+something like notepad, then copy and paste the SGF data between `[sgf][/sgf]`
+tags in a post, page or comment.
+
+For example, this will embed a blank 19x19 board:
+
+    `[sgf](;GM[1]FF[4]CA[UTF-8]SZ[19])[/sgf]`
 
 = How do I add a problem? =
 
@@ -133,6 +138,9 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 2. A couple tsumego
 
 == Changelog ==
+
+= 0.8.1 =
+* Adding SGF icon
 
 = 0.8 =
 * Preparing strings for i18n
