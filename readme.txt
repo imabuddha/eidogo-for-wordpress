@@ -112,6 +112,42 @@ images, but you may want to add a few lines to your theme's stylesheet to
 match things like margins with the rest of your layout or to change how
 instances are laid out by default when no alignment has been specified.
 
+= Can I make SGF files show up nicely on the attachment page =
+
+Yep, a convenience function is included; you'll just have to edit your theme's
+attachment.php. Right now, the main part of it probably looks something like:
+
+    ...
+    <?php if ( wp_attachment_is_image($post->id) ) ... ?>
+        ...
+    <?php else : ?>
+        ...
+    <?php endif; ?>
+    ...
+
+You'll want to add some code to treat SGF files in a special way.
+
+    ...
+    <?php if ( wp_attachment_is_image($post->id) ) ... ?>
+        ...
+    <?php elseif ($post->post_mime_type == 'application/x-go-sgf') :
+        echo wpeidogo_embed_attachment($post);
+    ?>
+    <?php else : ?>
+        ...
+    <?php endif; ?>
+    ...
+
+By default, `wpeidogo_embed_attachment()` will use the same options as are
+saved with the SGF file in your media library, but it also takes parameters...
+
+    wpeidogo_embed_attachment($post, $class, $caption, $href, $theme, $method)
+
+All except the first (the attachment iself) are optional. So if you want to
+center the SGF file, pass `'aligncenter'` for `$class`. By default, `$class`
+is `null`, `$href` is a direct link to download the SGF file (the other
+parameters use the saved values.)
+
 = I'm getting an error message in Internet Explorer 6 (or older) telling me to upgrade. =
 
 Yeah, the plugin doesn't work with IE 6 or older. EidoGo can be made to work
@@ -143,6 +179,8 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 
 = 0.8.3 =
 * sgfUrl is set relative to site root by default
+* Make it easy to allow SGF files to show up nicely in your theme's attachment
+  page
 
 = 0.8.2 =
 * Embedding preferences are now saved with SGF attachments
@@ -190,6 +228,8 @@ Some stuff I plan to do in the future:
   (it'll be cool!)
 * Make it easy to enable SGF embedding on attachment page in WordPress theme
 * Add styles to indicate right/wrong answers to problems
+* Pull information from SGF file to set the default title and summary
+  information on upload
 
 == Legal ==
 

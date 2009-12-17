@@ -418,9 +418,49 @@ html;
 		return $content;
 	} # }}}
 
+	function embed_attachment($post, $class=null, $caption=null, $href=null, $theme=null, $method=null) { # {{{
+		$meta = get_post_custom($post->ID);
+
+		if (is_null($theme))
+			$theme = ($meta['_wpeidogo_theme'] ? $meta['_wpeidogo_theme'][0] : 'compact');
+		if (is_null($method))
+			$method = ($meta['_wpeidogo_embed_method'] ? $meta['_wpeidogo_embed_method'][0] : 'iframe');
+		if ($method && $method != 'iframe' && $theme && $theme != 'problem')
+			$theme .= '-' . $method;
+
+		$problem_color = ($meta['_wpeidogo_problem_color'] ? $meta['_wpeidogo_problem_color'][0] : null);
+
+		if (is_null($caption))
+			$caption = $post->post_excerpt;
+		if (is_null($href))
+			$href = $post->guid;
+
+		$params = array('sgfUrl="'.$post->guid.'"');
+		if ($theme != 'compact')
+			$params[] = 'theme="'.$theme.'"';
+		if ($problem_color && $theme == 'problem')
+			$params[] = 'problemColor="'.$problem_color.'"';
+		if ($caption)
+			$params[] = 'caption="'.htmlspecialchars($caption).'"';
+		if ($href)
+			$params[] = 'href="'.htmlspecialchars($href).'"';
+		if ($class)
+			$params[] = 'class="'.htmlspecialchars($class).'"';
+		$params = join(' ', $params);
+
+		$content = "[sgf $params][/sgf]";
+		return apply_filters('the_content', $content);
+	} # }}}
+
 }
 
 $wpeidogo_plugin =& new WpEidoGoPlugin();
+
+function wpeidogo_embed_attachment($post, $class=null, $caption=null, $href=null, $theme=null, $method=null) { # {{{
+	global $wpeidogo_plugin;
+	return $wpeidogo_plugin->embed_attachment($post, $class, $caption, $href, $theme, $method);
+} # }}}
+
 # TODO: Useful error handling if PHP or WordPress versions are too old
 
 # vim:noet:ts=4
