@@ -143,6 +143,7 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 
 = 0.8.2
 * Embedding preferences are now saved with SGF attachments
+* Media form for SGF files is nicer
 
 = 0.8.1 =
 * Adding SGF icon

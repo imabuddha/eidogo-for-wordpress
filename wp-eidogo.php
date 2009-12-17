@@ -83,20 +83,23 @@ html;
 	function eidogo_head_tags_admin() { # {{{
 		echo <<<html
 		<link rel="stylesheet" media="all" type="text/css" href="{$this->plugin_url}/wp-eidogo-admin.css" />
+		<script type="text/javascript" src="{$this->plugin_url}/wp-eidogo-admin.js"></script>
 html;
 	} # }}}
 
 	/* Media library */
-	function simple_radio($field_name, $options, $post_id, $current=null) { # {{{
+	function simple_radio($field_name, $options, $post_id, $current=null, $onchange=false) { # {{{
 		# Very simple code for generating radio button groups; assumes
 		# $field_name and option keys don't have spaces or anything funny
 		$name = "attachments[$post_id][$field_name]";
 		$id_prefix = "wpeidogo-$field_name-$post_id";
 		$elements = array();
+		if ($onchange)
+			$oc = " onchange='return wpeidogo_theme_change($post_id);'";
 		foreach ($options as $key => $label) {
 			$id = "$id_prefix-$key";
 			$checked = ($current == $key ? " checked='checked'" : '');
-			$elements[] = "<input type='radio' name='$name' id='$id' value='$key'$checked />" .
+			$elements[] = "<input type='radio' name='$name' id='$id' value='$key'$checked$oc />" .
 				"<label for='$id'>$label</label>";
 		}
 		return join("\n", $elements);
@@ -117,20 +120,12 @@ html;
 		if (!$meta['_wpeidogo_embed_method']) $meta['_wpeidogo_embed_method'] = array('iframe');
 		if (!$meta['_wpeidogo_problem_color']) $meta['_wpeidogo_problem_color'] = array('auto');
 
-		$fmime = '<input type="hidden" name="attachments['.$post->ID.'][mime_type]"
-				value="'.htmlspecialchars($post->post_mime_type).'" />';
-		$fsrc = '<input type="hidden" name="attachments['.$post->ID.'][src]"
-				value="'.htmlspecialchars($post->guid).'" />';
-
 		$themes = array('compact' => 'Compact', 'full' => 'Full', 'problem' => 'Problem');
 		$form_fields['eidogo_theme'] = array(
 			'label' => __('Theme'),
 			'input' => 'html',
-			'html' => $fmime . $fsrc .
-				$this->simple_radio('eidogo_theme', $themes, $post->ID, $meta['_wpeidogo_theme'][0]),
+			'html' => $this->simple_radio('eidogo_theme', $themes, $post->ID, $meta['_wpeidogo_theme'][0], true),
 		);
-
-		# TODO: Hide embed_method for problem mode, and show problem color auto/black/white choice instead
 
 		$methods = array('iframe' => 'Iframe', 'inline' => 'Inline');
 		$form_fields['embed_method'] = array(
@@ -139,11 +134,19 @@ html;
 			'html' => $this->simple_radio('embed_method', $methods, $post->ID, $meta['_wpeidogo_embed_method'][0]),
 		);
 
+		$fmime = '<input type="hidden" name="attachments['.$post->ID.'][mime_type]"
+				value="'.htmlspecialchars($post->post_mime_type).'" />';
+		$fsrc = '<input type="hidden" name="attachments['.$post->ID.'][src]"
+				value="'.htmlspecialchars($post->guid).'" />';
+
+		$formscript = "<script type='text/javascript'>wpeidogo_theme_change({$post->ID});</script>";
+
 		$colors = array('auto' => 'Auto', 'B' => 'Black', 'W' => 'White');
 		$form_fields['problem_color'] = array(
 			'label' => __('Problem Color'),
 			'input' => 'html',
-			'html' => $this->simple_radio('problem_color', $colors, $post->ID, $meta['_wpeidogo_problem_color'][0]),
+			'html' => $this->simple_radio('problem_color', $colors, $post->ID, $meta['_wpeidogo_problem_color'][0]) .
+				$fmime . $fsrc . $formscript,
 		);
 
 		return $form_fields;
