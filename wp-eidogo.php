@@ -95,7 +95,7 @@ html;
 		$id_prefix = "wpeidogo-$field_name-$post_id";
 		$elements = array();
 		if ($onchange)
-			$oc = " onchange='return wpeidogo_theme_change($post_id);'";
+			$oc = " onchange='return wpeidogo_theme_change($post_id);' onclick='return wpeidogo_theme_change($post_id);'";
 		foreach ($options as $key => $label) {
 			$id = "$id_prefix-$key";
 			$checked = ($current == $key ? " checked='checked'" : '');

@@ -13,4 +13,9 @@ tr.problem_color td.field label {
 	display: inline !important;
 }
 
+/* Work around an apparent bug in the WordPress styles */
+input[type="radio"] {
+	border: 0 !important;
+}
+
 /* vim: set ts=4 sts=4 sw=4 noet : */

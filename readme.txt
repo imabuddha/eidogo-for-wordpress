@@ -226,7 +226,6 @@ Some stuff I plan to do in the future:
 * Error checking for old versions of PHP or Wordpress
 * Allow on-server editing of uploaded SGF files from admin screen with EidoGo
   (it'll be cool!)
-* Make it easy to enable SGF embedding on attachment page in WordPress theme
 * Add styles to indicate right/wrong answers to problems
 * Pull information from SGF file to set the default title and summary
   information on upload
