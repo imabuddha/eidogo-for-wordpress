@@ -2,13 +2,15 @@
 #media-upload tr.eidogo_theme td.field,
 #media-upload tr.embed_method td.field,
 #media-upload tr.problem_color td.field {
-    padding-left: 36px;
+	padding-left: 36px;
 }
 
 tr.eidogo_theme td.field label,
 tr.embed_method td.field label,
 tr.problem_color td.field label {
-    margin: 0 1em 0 0 !important;
-    padding: 0 0 0 2px !important;
-    display: inline !important;
+	margin: 0 1em 0 0 !important;
+	padding: 0 0 0 2px !important;
+	display: inline !important;
 }
+
+/* vim: set ts=4 sts=4 sw=4 noet : */

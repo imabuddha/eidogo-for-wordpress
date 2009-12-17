@@ -14,4 +14,5 @@ function wpeidogo_theme_change(id) {
 
 	return true;
 }
-// vim:noet:ts=4
+
+/* vim: set ts=4 sts=4 sw=4 noet : */

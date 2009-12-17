@@ -141,7 +141,10 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 
 == Changelog ==
 
-= 0.8.2
+= 0.8.3 =
+* sgfUrl is set relative to site root by default
+
+= 0.8.2 =
 * Embedding preferences are now saved with SGF attachments
 * Media form for SGF files is nicer
 

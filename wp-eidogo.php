@@ -136,8 +136,12 @@ html;
 
 		$fmime = '<input type="hidden" name="attachments['.$post->ID.'][mime_type]"
 				value="'.htmlspecialchars($post->post_mime_type).'" />';
-		$fsrc = '<input type="hidden" name="attachments['.$post->ID.'][src]"
-				value="'.htmlspecialchars($post->guid).'" />';
+		$sgf_url = $post->guid;
+		$site_url = get_option('siteurl');
+		if (substr($sgf_url, 0, strlen($site_url)) == $site_url)
+			$sgf_url = substr($sgf_url, strlen($site_url));
+		$furl = '<input type="hidden" name="attachments['.$post->ID.'][sgf_url]"
+				value="'.htmlspecialchars($sgf_url).'" />';
 
 		$formscript = "<script type='text/javascript'>wpeidogo_theme_change({$post->ID});</script>";
 
@@ -146,7 +150,7 @@ html;
 			'label' => __('Problem Color'),
 			'input' => 'html',
 			'html' => $this->simple_radio('problem_color', $colors, $post->ID, $meta['_wpeidogo_problem_color'][0]) .
-				$fmime . $fsrc . $formscript,
+				$fmime . $furl . $formscript,
 		);
 
 		return $form_fields;
@@ -178,8 +182,8 @@ html;
 
 		$params = '';
 
-		if ($post['src'])
-			$params .= ' sgfUrl="'.htmlspecialchars($post['src']).'"';
+		if ($post['sgf_url'])
+			$params .= ' sgfUrl="'.htmlspecialchars($post['sgf_url']).'"';
 
 		if ($theme && $theme != 'compact')
 			$params .= ' theme="'.htmlspecialchars($theme).'"';
