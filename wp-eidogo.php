@@ -67,7 +67,7 @@ class WpEidoGoPlugin {
 	function eidogo_head_tags() { # {{{
 		echo <<<html
 		<link rel="stylesheet" media="all" type="text/css" href="{$this->plugin_url}/wp-eidogo.css" />
-		<link rel="stylesheet" media="all" type="text/css" href="{$this->plugin_url}/eidogo-player-1.2/player/css/player.css" />
+		<link rel="stylesheet" media="all" type="text/css" href="{$this->plugin_url}/eidogo/player/css/player.css" />
 		<script type="text/javascript">
 			var broken_browser = false;
 		</script>
@@ -76,7 +76,7 @@ class WpEidoGoPlugin {
 			broken_browser = true;
 		</script>
 		<![endif]-->
-		<script type="text/javascript" src="{$this->plugin_url}/eidogo-player-1.2/player/js/all.compressed.js"></script>
+		<script type="text/javascript" src="{$this->plugin_url}/eidogo/player/js/all.compressed.js"></script>
 html;
 	} # }}}
 

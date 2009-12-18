@@ -177,6 +177,9 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 
 == Changelog ==
 
+= 0.8.4 =
+* Using latest EidoGo from github instead of 1.2 release
+
 = 0.8.3 =
 * sgfUrl is set relative to site root by default
 * Make it easy to allow SGF files to show up nicely in your theme's attachment
