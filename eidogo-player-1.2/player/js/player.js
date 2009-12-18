@@ -610,10 +610,14 @@ eidogo.Player.prototype = {
         // nab the outermost points
         for (var key in points) {
             var pt = this.sgfCoordToPoint(key);
-            if (l == null || pt.x < l) l = pt.x;
-            if (r == null || pt.x > r) r = pt.x;
-            if (t == null || pt.y < t) t = pt.y;
-            if (b == null || pt.y > b) b = pt.y;
+            if (pt.x != null) {
+                if (l == null || pt.x < l) l = pt.x;
+                if (r == null || pt.x > r) r = pt.x;
+            }
+            if (pt.y != null) {
+                if (t == null || pt.y < t) t = pt.y;
+                if (b == null || pt.y > b) b = pt.y;
+            }
         }
         this.cropParams.width = r - l + 1;
         this.cropParams.height = b - t + 1;
@@ -625,9 +629,9 @@ eidogo.Player.prototype = {
         if (lpad) { this.cropParams.width += lpad; this.cropParams.left -= lpad; }
         for (var tpad = pad; t - tpad < 0; tpad--) {};
         if (tpad) { this.cropParams.height += tpad; this.cropParams.top -= tpad; }
-        for (var rpad = pad; r + rpad > size; rpad--) {};
+        for (var rpad = pad; r + rpad > size-1; rpad--) {};
         if (rpad) { this.cropParams.width += rpad; }
-        for (var bpad = pad; b + bpad > size; bpad--) {};
+        for (var bpad = pad; b + bpad > size-1; bpad--) {};
         if (bpad) { this.cropParams.height += bpad; }
     },
 

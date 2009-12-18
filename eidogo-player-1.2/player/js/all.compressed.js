@@ -1485,17 +1485,21 @@ _38[_3d[i]]="";
 });
 for(var key in _38){
 var pt=this.sgfCoordToPoint(key);
+if(pt.x!=null){
 if(l==null||pt.x<l){
 l=pt.x;
 }
 if(r==null||pt.x>r){
 r=pt.x;
 }
+}
+if(pt.y!=null){
 if(t==null||pt.y<t){
 t=pt.y;
 }
 if(b==null||pt.y>b){
 b=pt.y;
+}
 }
 }
 this.cropParams.width=r-l+1;
@@ -1515,12 +1519,12 @@ if(_42){
 this.cropParams.height+=_42;
 this.cropParams.top-=_42;
 }
-for(var _43=pad;r+_43>_34;_43--){
+for(var _43=pad;r+_43>_34-1;_43--){
 }
 if(_43){
 this.cropParams.width+=_43;
 }
-for(var _44=pad;b+_44>_34;_44--){
+for(var _44=pad;b+_44>_34-1;_44--){
 }
 if(_44){
 this.cropParams.height+=_44;

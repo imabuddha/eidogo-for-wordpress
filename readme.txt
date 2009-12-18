@@ -112,7 +112,7 @@ images, but you may want to add a few lines to your theme's stylesheet to
 match things like margins with the rest of your layout or to change how
 instances are laid out by default when no alignment has been specified.
 
-= Can I make SGF files show up nicely on the attachment page =
+= Can I make SGF files show up nicely on the attachment page? =
 
 Yep, a convenience function is included; you'll just have to edit your theme's
 attachment.php. Right now, the main part of it probably looks something like:
@@ -233,6 +233,8 @@ Some stuff I plan to do in the future:
   (it'll be cool!)
 * Pull information from SGF file to set the default title and summary
   information on upload
+* Store additional metadata about uploaded SGF files to create, e.g. a problem
+  database (it would be useful to know the max width/height of problems)
 
 == Legal ==
 
