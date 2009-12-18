@@ -39,7 +39,7 @@ Array.prototype.copy = function() {
     var copy = [];
     var len = this.length; // minor optimization
     for (var i = 0; i < len; i++) {
-        if (this[i] instanceof Array) {
+        if (eidogo.util.isArray(this[i])) {
             copy[i] = this[i].copy();
         } else {
             copy[i] = this[i];

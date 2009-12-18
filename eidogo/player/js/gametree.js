@@ -43,7 +43,7 @@ eidogo.GameNode.prototype = {
     **/
     pushProperty: function(prop, value) {
         if (this[prop]) {
-            if (!(this[prop] instanceof Array))
+            if (!(eidogo.util.isArray(this[prop])))
                 this[prop] = [this[prop]];
             if (!this[prop].contains(value))
                 this[prop].push(value);
@@ -57,7 +57,7 @@ eidogo.GameNode.prototype = {
     **/
     hasPropertyValue: function(prop, value) {
         if (!this[prop]) return false;
-        var values = (this[prop] instanceof Array ? this[prop] : [this[prop]]);
+        var values = (eidogo.util.isArray(this[prop]) ? this[prop] : [this[prop]]);
         return values.contains(value);
     },
     /**
@@ -69,9 +69,9 @@ eidogo.GameNode.prototype = {
         var test = (value instanceof RegExp) ?
             function(v) { return value.test(v); } :
             function(v) { return value == v; };
-        var props = (prop instanceof Array ? prop : [prop]);
+        var props = (eidogo.util.isArray(prop) ? prop : [prop]);
         for (var i = 0; prop = props[i]; i++) {
-            if (this[prop] instanceof Array) {
+            if (eidogo.util.isArray(this[prop])) {
                 this[prop] = this[prop].filter(function(v) { return !test(v); });
                 if (!this[prop].length) delete this[prop];
             } else if (test(this.prop)) {
@@ -134,7 +134,7 @@ eidogo.GameNode.prototype = {
         for (propName in this) {
             isPrivate = (propName.charAt(0) == "_");
             isString = (typeof this[propName] == "string");
-            isArray = (this[propName] instanceof Array);
+            isArray = (eidogo.util.isArray(this[propName]));
             if (!isPrivate && (isString || isArray))
                 properties[propName] = this[propName];
         }
@@ -174,7 +174,7 @@ eidogo.GameNode.prototype = {
         var deleted = null;
         for (var propName in props) {
             if (propName == "AW" || propName == "AB" || propName == "AE") {
-                if (!(this[propName] instanceof Array))
+                if (!(eidogo.util.isArray(this[propName])))
                     this[propName] = [this[propName]];
                 this[propName] = this[propName].filter(function(val) {
                     if (val == coord) {
@@ -215,7 +215,7 @@ eidogo.GameNode.prototype = {
             if (!props) return "";
             var sgf = ";", key, val;
             for (key in props) {
-                if (props[key] instanceof Array) {
+                if (eidogo.util.isArray(props[key])) {
                     val = props[key].map(function (val) {
                         return val.toString().replace(/\]/g, "\\]");
                     }).join("][");

@@ -34,7 +34,7 @@ Array.prototype.copy=function(){
 var _a=[];
 var _b=this.length;
 for(var i=0;i<_b;i++){
-if(this[i] instanceof Array){
+if(eidogo.util.isArray(this[i])){
 _a[i]=this[i].copy();
 }else{
 _a[i]=this[i];
@@ -382,6 +382,8 @@ for(var i in obj){
 _55++;
 }
 return _55;
+},isArray:function(obj){
+return Object.prototype.toString.call(obj)==="[object Array]";
 }};
 })();
 
@@ -402,7 +404,7 @@ this.loadJson(_2);
 }
 },pushProperty:function(_4,_5){
 if(this[_4]){
-if(!(this[_4] instanceof Array)){
+if(!(eidogo.util.isArray(this[_4]))){
 this[_4]=[this[_4]];
 }
 if(!this[_4].contains(_5)){
@@ -415,7 +417,7 @@ this[_4]=_5;
 if(!this[_6]){
 return false;
 }
-var _8=(this[_6] instanceof Array?this[_6]:[this[_6]]);
+var _8=(eidogo.util.isArray(this[_6])?this[_6]:[this[_6]]);
 return _8.contains(_7);
 },deletePropertyValue:function(_9,_a){
 var _b=(_a instanceof RegExp)?function(v){
@@ -423,9 +425,9 @@ return _a.test(v);
 }:function(v){
 return _a==v;
 };
-var _e=(_9 instanceof Array?_9:[_9]);
+var _e=(eidogo.util.isArray(_9)?_9:[_9]);
 for(var i=0;_9=_e[i];i++){
-if(this[_9] instanceof Array){
+if(eidogo.util.isArray(this[_9])){
 this[_9]=this[_9].filter(function(v){
 return !_b(v);
 });
@@ -474,7 +476,7 @@ var _1b={},_1c,_1d,_1e,_1f;
 for(_1c in this){
 isPrivate=(_1c.charAt(0)=="_");
 _1e=(typeof this[_1c]=="string");
-_1f=(this[_1c] instanceof Array);
+_1f=(eidogo.util.isArray(this[_1c]));
 if(!isPrivate&&(_1e||_1f)){
 _1b[_1c]=this[_1c];
 }
@@ -506,7 +508,7 @@ var _27=this.getProperties();
 var _28=null;
 for(var _29 in _27){
 if(_29=="AW"||_29=="AB"||_29=="AE"){
-if(!(this[_29] instanceof Array)){
+if(!(eidogo.util.isArray(this[_29]))){
 this[_29]=[this[_29]];
 }
 this[_29]=this[_29].filter(function(val){
@@ -547,7 +549,7 @@ return "";
 }
 var sgf=";",key,val;
 for(key in _2f){
-if(_2f[key] instanceof Array){
+if(eidogo.util.isArray(_2f[key])){
 val=_2f[key].map(function(val){
 return val.toString().replace(/\]/g,"\\]");
 }).join("][");
@@ -730,7 +732,7 @@ this.index++;
 }
 }
 if(_7[_8]){
-if(!(_7[_8] instanceof Array)){
+if(!(eidogo.util.isArray(_7[_8]))){
 _7[_8]=[_7[_8]];
 }
 _7[_8]=_7[_8].concat(_9);
@@ -1473,7 +1475,7 @@ var _3c,i,_3e;
 for(_3c in _3b){
 if(/^(W|B|AW|AB|LB)$/.test(_3c)){
 _3e=_3b[_3c];
-if(!(_3e instanceof Array)){
+if(!(eidogo.util.isArray(_3e))){
 _3e=[_3e];
 }
 if(_3c!="LB"){
@@ -1586,7 +1588,7 @@ if(_58){
 this.resetCursor(true);
 }
 var _59=parseInt(_57,10);
-if(!(_57 instanceof Array)&&!isNaN(_59)){
+if(!(eidogo.util.isArray(_57))&&!isNaN(_59)){
 if(_58){
 _59++;
 }
@@ -1596,7 +1598,7 @@ this.variation(null,true);
 this.refresh();
 return;
 }
-if(!(_57 instanceof Array)||!_57.length){
+if(!(eidogo.util.isArray(_57))||!_57.length){
 alert(t["bad path"]+" "+_57);
 return;
 }
@@ -2402,7 +2404,7 @@ this.dom.whiteName.innerHTML="";
 this.dom.blackName.innerHTML="";
 var dl=document.createElement("dl"),val;
 for(var _10c in this.infoLabels){
-if(_109[_10c] instanceof Array){
+if(eidogo.util.isArray(_109[_10c])){
 _109[_10c]=_109[_10c][0];
 }
 if(_109[_10c]){
@@ -2647,7 +2649,7 @@ this.addMarker(_12c,"current");
 }
 }
 },addStone:function(_130,_131){
-if(!(_130 instanceof Array)){
+if(!(eidogo.util.isArray(_130))){
 _130=[_130];
 }
 _130=this.expandCompressedPoints(_130);
@@ -2655,7 +2657,7 @@ for(var i=0;i<_130.length;i++){
 this.board.addStone(this.sgfCoordToPoint(_130[i]),_131=="AW"?this.board.WHITE:_131=="AB"?this.board.BLACK:this.board.EMPTY);
 }
 },addMarker:function(_133,type){
-if(!(_133 instanceof Array)){
+if(!(eidogo.util.isArray(_133))){
 _133=[_133];
 }
 _133=this.expandCompressedPoints(_133);

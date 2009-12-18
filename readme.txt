@@ -179,6 +179,8 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 
 = 0.8.4 =
 * Using latest EidoGo from github instead of 1.2 release
+* Fix bug in EidoGo; replace unreliable `instanceof Array` with new, more
+  robust `eidogo.util.isArray`
 
 = 0.8.3 =
 * sgfUrl is set relative to site root by default

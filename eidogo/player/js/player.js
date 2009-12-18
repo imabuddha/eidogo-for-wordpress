@@ -612,7 +612,7 @@ eidogo.Player.prototype = {
             for (prop in node) {
                 if (/^(W|B|AW|AB|LB)$/.test(prop)) {
                     coord = node[prop];
-                    if (!(coord instanceof Array)) coord = [coord];
+                    if (!(eidogo.util.isArray(coord))) coord = [coord];
                     if (prop != 'LB') coord = me.expandCompressedPoints(coord);
                     else coord = [coord[0].split(/:/)[0]];
                     for (i = 0; i < coord.length; i++)
@@ -736,7 +736,7 @@ eidogo.Player.prototype = {
         
         // Move number
         var steps = parseInt(path, 10);
-        if (!(path instanceof Array) && !isNaN(steps)) {
+        if (!(eidogo.util.isArray(path)) && !isNaN(steps)) {
             if (fromStart) steps++; // not zero-based
             for (var i = 0; i < steps; i++)
                 this.variation(null, true);
@@ -745,7 +745,7 @@ eidogo.Player.prototype = {
         }
         
         // Not a path?
-        if (!(path instanceof Array) || !path.length) {
+        if (!(eidogo.util.isArray(path)) || !path.length) {
             alert(t['bad path'] + " " + path);
             return;
         }
@@ -1734,7 +1734,7 @@ eidogo.Player.prototype = {
         this.dom.blackName.innerHTML = "";
         var dl = document.createElement('dl'), val;
         for (var propName in this.infoLabels) {
-            if (gameInfo[propName] instanceof Array) {
+            if (eidogo.util.isArray(gameInfo[propName])) {
                 gameInfo[propName] = gameInfo[propName][0];
             }
             if (gameInfo[propName]) {
@@ -2022,7 +2022,7 @@ eidogo.Player.prototype = {
     },
 
     addStone: function(coord, color) {
-        if (!(coord instanceof Array)) {
+        if (!(eidogo.util.isArray(coord))) {
             coord = [coord];
         }
         coord = this.expandCompressedPoints(coord);
@@ -2036,7 +2036,7 @@ eidogo.Player.prototype = {
     },
 
     addMarker: function(coord, type) {
-        if (!(coord instanceof Array)) {
+        if (!(eidogo.util.isArray(coord))) {
             coord = [coord];
         }
         coord = this.expandCompressedPoints(coord);

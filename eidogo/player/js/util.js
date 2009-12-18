@@ -299,6 +299,10 @@ eidogo.util = {
         var count = 0;
         for (var i in obj) count++;
         return count;
+    },
+    
+    isArray: function(obj) {
+        return Object.prototype.toString.call(obj) === "[object Array]";
     }
     
 };

@@ -24,14 +24,6 @@
 	var sgfContainerId = 'player-container-' + window.location.hash.substring(1);
 	var config = parent.document.getElementById(sgfContainerId).eidogoConfig;
 
-	// EidoGo tests config.loadPath against "instanceof Array". Because we're
-	// getting the config from the parent window and javascript is weird, that
-	// test fails (it's "instance of parent.Array"). Using foo.slice(0) gives
-	// us an Array in Firefox, but in IE, it just gives us another
-	// parent.Array. Using Array.prototype, however, seems to work.
-	if (config.loadPath && config.loadPath instanceof parent.Array)
-		config.loadPath = Array.prototype.slice.call(config.loadPath);
-
 	// Create the player in the given container
 	config.container = "player-container";
 	var player = new eidogo.Player(config);

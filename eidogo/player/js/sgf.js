@@ -83,7 +83,7 @@ eidogo.SgfParser.prototype = {
                     }
                 }
                 if (node[key]) {
-                    if (!(node[key] instanceof Array)) {
+                    if (!(eidogo.util.isArray(node[key]))) {
                         node[key] = [node[key]];
                     }
                     node[key] = node[key].concat(values);
