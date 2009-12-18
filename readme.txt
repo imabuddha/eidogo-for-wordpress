@@ -2,9 +2,9 @@
 Contributors: fwiffo
 Donate link: href="http://www.amazon.com/gp/redirect.html?ie=UTF8&location=http%3A%2F%2Fwww.amazon.com%2Fgp%2Fregistry%2Fwishlist%2F3ETA9NVNRTZ4P&tag=fomygocl-20&linkCode=ur2&camp=1789&creative=390957
 Tags: widget, go, weiqi, baduk, sgf, EidoGo
-Requires at least: 2.5 (maybe?)
-Tested up to: 2.8.6
-Stable tag: 0.8.2
+Requires at least: 2.5?
+Tested up to: 2.9-RC1
+Stable tag: 0.8.3
 
 EidoGo for WordPress makes it easy to embed SGF files in your WordPress-powered
 blog with the EidoGo SGF viewer and editor.
@@ -181,6 +181,8 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 * sgfUrl is set relative to site root by default
 * Make it easy to allow SGF files to show up nicely in your theme's attachment
   page
+* Some IE7 and IE8 fixes
+* Added styles to indicate right/wrong answers to problems
 
 = 0.8.2 =
 * Embedding preferences are now saved with SGF attachments
@@ -226,7 +228,6 @@ Some stuff I plan to do in the future:
 * Error checking for old versions of PHP or Wordpress
 * Allow on-server editing of uploaded SGF files from admin screen with EidoGo
   (it'll be cool!)
-* Add styles to indicate right/wrong answers to problems
 * Pull information from SGF file to set the default title and summary
   information on upload
 

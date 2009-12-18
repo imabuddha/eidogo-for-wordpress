@@ -438,7 +438,7 @@ html;
 		$params = array('sgfUrl="'.$post->guid.'"');
 		if ($theme != 'compact')
 			$params[] = 'theme="'.$theme.'"';
-		if ($problem_color && $theme == 'problem')
+		if ($problem_color && $theme == 'problem' && strtolower($problem_color) != 'auto')
 			$params[] = 'problemColor="'.$problem_color.'"';
 		if ($caption)
 			$params[] = 'caption="'.htmlspecialchars($caption).'"';
