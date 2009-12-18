@@ -213,6 +213,9 @@ This is the first public release.
 SGF support is now integrated with the media library so adding SGF files is
 now much easier.
 
+= 0.8.3 =
+Lots of polish-type enhancements and some Internet Explorer fixes
+
 == Roadmap ==
 
 Some stuff I plan to do in the future:
