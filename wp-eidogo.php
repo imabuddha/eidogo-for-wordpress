@@ -156,6 +156,59 @@ html;
 		return $form_fields;
 	} # }}}
 
+	function get_sgf_metadata($post) { # {{{
+		$fn = get_attached_file($post['ID']);
+		$meta = array();
+		$contents = file_get_contents($fn, 0, null, 0, 65536);
+		$matches = array();
+
+		# This is naïve parsing, write something fancier later to get more SGF information
+		if (preg_match('/GM\[(\d+)\]/', $contents, $matches)) {
+			$meta['GM'] = (int)$matches[1];
+			# Only process go SGF files
+			if ($meta['GM'] != 1)
+				return $meta;
+		} else {
+			return $meta;
+		}
+
+		# Get the board size information
+		if (preg_match('/SZ\[(\d+)\]/', $contents, $matches))
+			$meta['SZ'] = (int)$matches[1];
+
+		# Searches same set of SGF attributes as EidoGo does for problem mode
+		preg_match_all('/(W|B|AW|AB|LB)((\[([a-z]{2}(:[a-z]{2})?)\]\s*)+)/s', $contents, $matches);
+		$l = $r = $b = $t = null;
+		foreach ($matches[2] as $pointlist) {
+			$pointlist = trim($pointlist);
+			$points = preg_split('/(\]\s*\[|:)/', substr($pointlist, 1, strlen($pointlist)-2));
+			foreach ($points as $p) {
+				if ($p == '' || $p == 'tt' && (!$meta['SZ'] || $meta['SZ'] <= 19))
+					continue; # skip passes
+				$x = ord($p[0]) - ord('a');
+				$y = ord($p[1]) - ord('a');
+				if (is_null($l) || $x < $l)
+					$l = $x;
+				if (is_null($r) || $x > $r)
+					$r = $x;
+				if (is_null($t) || $y < $t)
+					$t = $y;
+				if (is_null($b) || $y > $b)
+					$b = $y;
+			}
+		}
+
+		if (is_null($l)) {
+			$meta['pattern_width'] = 0;
+			$meta['pattern_height'] = 0;
+		} else {
+			$meta['pattern_width'] = $r-$l+1;
+			$meta['pattern_height'] = $b-$t+1;
+		}
+
+		return $meta;
+	} # }}}
+
 	function save_sgf_info($post, $input) { # {{{
 		if (!$input['mime_type'] || $input['mime_type'] != $this->sgf_mime_type)
 			return $post;
@@ -163,9 +216,13 @@ html;
 		if (!$post['ID'])
 			return $post;
 
+		if (!current_user_can('edit_post', $post['ID']))
+			return $post;
+
 		update_post_meta($post['ID'], '_wpeidogo_theme', $input['eidogo_theme']);
 		update_post_meta($post['ID'], '_wpeidogo_embed_method', $input['embed_method']);
 		update_post_meta($post['ID'], '_wpeidogo_problem_color', $input['problem_color']);
+		update_post_meta($post['ID'], '_wpeidogo_sgf_metadata', $this->get_sgf_metadata($post));
 
 		return $post;
 	} # }}}
