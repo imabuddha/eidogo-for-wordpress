@@ -152,7 +152,8 @@
 
 /* For problem mode, make sure three lines are exactly visible for neatness */
 .wp-eidogo-problem .comments {
-	height: 39px !important;
+	height: auto !important;
+	min-height: 39px !important;
 	line-height: 13px;
 }
 
@@ -193,6 +194,15 @@
 
 .wp-eidogo.aligncenter .player-container,
 .wp-eidogo-problem.aligncenter .eidogo-player {
+	margin: 0 auto;
+}
+
+/* For sidebar EidoGo widget */
+.widget-random-go-problem .wp-eidogo {
+	text-align: center;
+}
+
+.widget-random-go-problem .player-container .eidogo-player {
 	margin: 0 auto;
 }
 

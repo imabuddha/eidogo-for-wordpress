@@ -2,7 +2,7 @@
 Contributors: fwiffo
 Donate link: href="http://www.amazon.com/gp/redirect.html?ie=UTF8&location=http%3A%2F%2Fwww.amazon.com%2Fgp%2Fregistry%2Fwishlist%2F3ETA9NVNRTZ4P&tag=fomygocl-20&linkCode=ur2&camp=1789&creative=390957
 Tags: widget, go, weiqi, baduk, sgf, EidoGo
-Requires at least: 2.5?
+Requires at least: 2.8
 Tested up to: 2.9
 Stable tag: 0.8.3
 
@@ -183,6 +183,8 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
   robust `eidogo.util.isArray`
 * Adding `current_user_can()` check when saving SGF metadata
 * Storing some additional metadata about SGF files
+* Created "Random Go Problem" widget
+* Fixed crooked board coordinates in EidoGo
 
 = 0.8.3 =
 * sgfUrl is set relative to site root by default

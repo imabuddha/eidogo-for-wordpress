@@ -25,6 +25,99 @@ Author URI: http://www.fortmyersgo.org/
 
 */
 
+class WpEidoGoRandomProblemWidget extends WP_Widget {
+
+	function WpEidoGoRandomProblemWidget() { # {{{
+		$widget_ops = array(
+			'classname' => 'widget-random-go-problem',
+			'description' => __('Show a random go problem from your media library'),
+		);
+		$this->WP_Widget('random_go_problem', __('Random Go Problem'), $widget_ops);
+	} # }}}
+
+	function widget($args, $instance) { # {{{
+		$title = apply_filters('widget_title',
+			(empty($instance['title']) ? __('Random Go Problem') : $instance['title']));
+
+		extract($args);
+
+		# This could be made more efficient rather than looping like this
+		$query_args = array(
+			'orderby' => 'rand',
+			'meta_key' => '_wpeidogo_theme',
+			'meta_value' => 'problem',
+			'post_type' => 'attachment',
+		);
+
+		$problem = __('No suitable problems were found.');
+		$posts = get_posts($query_args);
+		foreach ($posts as $post) {
+
+			$custom = get_post_custom($post->ID);
+			if (!$custom['_wpeidogo_sgf_metadata'] || !$custom['_wpeidogo_sgf_metadata'][0])
+				continue;
+			$width = $custom['_wpeidogo_sgf_metadata'][0]['pattern_width'];
+			$height = $custom['_wpeidogo_sgf_metadata'][0]['pattern_height'];
+
+			if ($instance['max_width'])
+				if (!$width || $width > $instance['max_width'])
+					continue;
+
+			if ($instance['max_height'])
+				if (!$height || $height > $instance['max_height'])
+					continue;
+
+			$problem = wpeidogo_embed_attachment($post, null, null, '');
+			break;
+		}
+
+		echo $before_widget . $before_title . $title . $after_title . $problem . $after_widget;
+
+		wp_reset_query();
+	} # }}}
+
+	function update($new_instance, $old_instance) { # {{{
+		$instance = $old_instance;
+		$instance['title'] = $new_instance['title'];
+		$instance['max_width'] = (int)$new_instance['max_width'];
+		$instance['max_height'] = (int)$new_instance['max_height'];
+
+		return $instance;
+	} # }}}
+
+	function form($instance) { # {{{
+		$title = attribute_escape($instance['title']);
+
+		if (!$max_width = (int)$instance['max_width'])
+			$max_width = '';
+
+		if (!$max_height = (int)$instance['max_height'])
+			$max_height = '';
+
+		$title_id = $this->get_field_id('title');
+		$max_width_id = $this->get_field_id('max_width');
+		$max_height_id = $this->get_field_id('max_height');
+
+		$title_name = $this->get_field_name('title');
+		$max_width_name = $this->get_field_name('max_width');
+		$max_height_name = $this->get_field_name('max_height');
+
+		$title_label = __('Title:');
+		$max_width_label = __('Max Width:');
+		$max_height_label = __('Max Height:');
+
+		echo <<<html
+			<p><label for="{$title_id}">{$title_label}
+				<input id="{$title_id}" name="{$title_name}" value="{$title}" class="widefat" /></label></p>
+			<p><label for="{$max_width_id}">{$max_width_label}</label>
+				<input id="{$max_width_id}" name="{$max_width_name}" value="{$max_width}" /></label></p>
+			<p><label for="{$max_height_id}">{$max_height_label}</label>
+				<input id="{$max_height_id}" name="{$max_height_name}" value="{$max_height}" /></label></p>
+html;
+	} # }}}
+
+}
+
 class WpEidoGoPlugin {
 
 	var $sgf_count = 0;
@@ -61,6 +154,13 @@ class WpEidoGoPlugin {
 		add_filter('attachment_fields_to_edit', array(&$this, 'sgf_media_form'), 10, 2);
 		add_filter('media_send_to_editor', array(&$this, 'sgf_send_to_editor'), 10, 3);
 		add_filter('attachment_fields_to_save', array(&$this, 'save_sgf_info'), 10, 3);
+
+		# For the random problem widget
+		add_action('widgets_init', array(&$this, 'register_widgets'));
+	} # }}}
+
+	function register_widgets() { # {{{
+		register_widget('WpEidoGoRandomProblemWidget');
 	} # }}}
 
 	/* HTML header */
