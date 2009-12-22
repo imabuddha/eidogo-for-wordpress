@@ -180,6 +180,10 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 
 == Changelog ==
 
+= 0.8.5 =
+* Changed `embed_attachment()` to not work by invoking filters, which had
+  weird side effects like getting sociable stuck inside the problem widget
+
 = 0.8.4 =
 * Using latest EidoGo from github instead of 1.2 release
 * Fix bug in EidoGo; replace unreliable `instanceof Array` with new, more
@@ -245,8 +249,7 @@ Some stuff I plan to do in the future:
   (it'll be cool!)
 * Pull information from SGF file to set the default title and summary
   information on upload
-* Store additional metadata about uploaded SGF files to create, e.g. a problem
-  database (it would be useful to know the max width/height of problems)
+* Store additional metadata about uploaded SGF files
 
 == Legal ==
 
