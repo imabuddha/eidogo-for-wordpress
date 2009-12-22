@@ -4,7 +4,7 @@ Donate link: href="http://www.amazon.com/gp/redirect.html?ie=UTF8&location=http%
 Tags: widget, go, weiqi, baduk, sgf, EidoGo
 Requires at least: 2.8
 Tested up to: 2.9
-Stable tag: 0.8.3
+Stable tag: 0.8.4
 
 EidoGo for WordPress makes it easy to embed SGF files in your WordPress-powered
 blog with the EidoGo SGF viewer and editor.
@@ -174,6 +174,9 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 
 1. EidoGo embedded with the "full" theme
 2. A couple tsumego
+3. Uploading SGF files
+4. Random problem widget
+5. Administration for random problem widget
 
 == Changelog ==
 
