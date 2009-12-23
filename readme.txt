@@ -112,6 +112,13 @@ images, but you may want to add a few lines to your theme's stylesheet to
 match things like margins with the rest of your layout or to change how
 instances are laid out by default when no alignment has been specified.
 
+= How did you get the really compact layout with tiny stones in that screenshot of the random problem widget? =
+
+You can do a lot with EidoGo and stylesheets. I've included an example
+stylesheet and the images I used in a the `tiny-theme` directory. The exact
+details of the stylesheet will depend on your theme, but the example should
+have the information you need to get you started.
+
 = Can I make SGF files show up nicely on the attachment page? =
 
 Yep, a convenience function is included; you'll just have to edit your theme's

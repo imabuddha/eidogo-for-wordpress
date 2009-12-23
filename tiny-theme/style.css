@@ -1,0 +1,85 @@
+/* Smaller theme for sidebar widget */
+#sidebar .eidogo-player.theme-problem .board.size19 {
+	width: 253px !important;
+	height: 253px !important;
+	background-image: url(images/board-19.png);
+}
+
+#sidebar .eidogo-player.theme-problem .board .point {
+	width: 13px !important;
+	height: 13px !important;
+}
+
+#sidebar .eidogo-player.theme-problem .board .point.stone.white {
+	background-image: url(images/w.png);
+}
+
+#sidebar .eidogo-player.theme-problem .board .point.stone.black {
+	background-image: url(images/b.png);
+}
+
+#sidebar .eidogo-player.theme-problem .board .point.marker {
+	background-image: url(images/markers.png);
+}
+
+#sidebar .eidogo-player.theme-problem .board .point.marker.dim {
+	background-image: url(images/dim.png);
+}
+
+#sidebar .eidogo-player.theme-problem .board .point.marker.circle {
+	background-position: 0 0;
+}
+
+#sidebar .eidogo-player.theme-problem .board .point.marker.square {
+	background-position: 0 -13px;
+}
+
+#sidebar .eidogo-player.theme-problem .board .point.marker.triangle {
+	background-position: 0 -26px;
+}
+
+#sidebar .eidogo-player.theme-problem .board .point.marker.ex {
+	background-position: 0 -39px;
+}
+
+#sidebar .eidogo-player.theme-problem .board .point.marker.current {
+	background-position: 0 -52px;
+}
+
+#sidebar .eidogo-player.theme-problem .board .point.marker.territory-white {
+	background-position: 0 -65px;
+}
+
+#sidebar .eidogo-player.theme-problem .board .point.marker.territory-black {
+	background-position: 0 -78px;
+}
+
+/* Make tiny text in widget aligned correctly and more readable */
+#sidebar .eidogo-player.theme-problem .board .point.marker.label {
+	padding: 0;
+	font-size: 12px;
+	line-height: 13px;
+	text-align: center;
+	background: none;
+	text-shadow: #705f36 1px 1px 1px;
+}
+
+/* Tweaked comment layout */
+#sidebar .wp-eidogo-problem .comments {
+	height: auto !important;
+	min-height: 33px !important;
+	line-height: 11px !important;
+	font-size: 10px;
+	padding: 3px;
+}
+
+/* Fix controls for really tiny problems */
+#sidebar .eidogo-player.theme-problem {
+	overflow: hidden;
+}
+
+#sidebar .eidogo-player.theme-problem .controls {
+	min-width: 88px;
+}
+
+/* vim: set ts=4 sts=4 sw=4 noet : */
