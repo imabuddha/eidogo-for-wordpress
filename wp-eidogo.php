@@ -256,25 +256,148 @@ html;
 		return $form_fields;
 	} # }}}
 
+	function clean_sgf_text($val) { # {{{
+		# Normalize linebreaks
+		$val = str_replace("\r\n", "\n", $val);
+		$val = str_replace("\n\r", "\n", $val);
+		$val = str_replace("\r", "\n", $val);
+
+		# remove soft linebreaks
+		$val = str_replace("\\\n", "", $val);
+
+		# Handle escaping
+		$val = preg_replace('/\\\\(.)/s', '$1', $val);
+
+		# TODO: Convert non-newline whitespace to space
+		# TODO: Handle encoding?
+
+		return $val;
+	} # }}}
+
+	function clean_sgf_simpletext($val) { # {{{
+		$val = $this->clean_sgf_text($val);
+		$val = trim(preg_replace('/\s+/', ' ', $val));
+		return $val;
+	} # }}}
+
+	function clean_sgf_composed($val) { # {{{
+		$parts = split(':', $val);
+		$ret = array();
+		$current = null;
+		foreach ($parts as $part) {
+			if (is_null($current)) {
+				$current = $part;
+			} else {
+				$endslashes = strlen($current) - strlen(rtrim($current, '\\'));
+				# Check to see if the current element ends in an odd number of backslashes
+				# (indicating that the : is escaped and is preceeded by 0 or more escaped
+				# backslashes), and if so, join up the next split element
+				if ($endslashes % 2) {
+					$current .= $part;
+				} else {
+					$ret[] = $current;
+					$current = $part;
+				}
+			}
+		}
+		if (!is_null($current))
+			$ret[] = $current;
+		return $ret;
+	} # }}}
+
+	function is_pass($point, $size) { # {{{
+		# Empty ponits area always passes
+		if ($point == '')
+			return true;
+		# In older SGF versions 'tt' is a pass if the board is 19x19 or smaller
+		if ($point != 'tt')
+			return false;
+		# This is necessary because SZ is a composed value to allow for rectangular boards
+		foreach ($size as $dim)
+			if ($dim > 19)
+				return false;
+		return true;
+	} # }}}
+
 	function get_sgf_metadata($post) { # {{{
 		$fn = get_attached_file($post['ID']);
 		$meta = array();
 		$contents = file_get_contents($fn, 0, null, 0, 65536);
 		$matches = array();
 
-		# This is naïve parsing, write something fancier later to get more SGF information
-		if (preg_match('/GM\[(\d+)\]/', $contents, $matches)) {
-			$meta['GM'] = (int)$matches[1];
-			# Only process go SGF files
-			if ($meta['GM'] != 1)
-				return $meta;
-		} else {
-			return $meta;
+		# These are all game-info or root type nodes, and none are list types.
+		# The parsing method will have to be rewritten if list types are 
+		# admitted here.
+		# NOTE: This only really handles one occurance of each of these node
+		# types and therefore may not work that well on game collections
+		$game_attrs = array(
+			'AN' => array('simpletext', __('Annotated By')),
+			'AP' => array('simpletext-composed', __('Application')),
+			'BR' => array('simpletext', __('Black Rank')),
+			'BT' => array('simpletext', __('Black Team')),
+			'CA' => array('simpletext', __('Character Set')),
+			'CP' => array('simpletext', __('Copyright')),
+			'DT' => array('simpletext', __('Dates Played')),
+			'EV' => array('simpletext', __('Event')),
+			'FF' => array('number',     __('SGF Version')),
+			'GC' => array('text',       __('Game Comment')),
+			'GM' => array('number',     __('Game')),
+			'GN' => array('simpletext', __('Game Name')),
+			'HA' => array('number',     __('Handicap')),
+			'KM' => array('real',       __('Komi')),
+			'ON' => array('simpletext', __('Opening')),
+			'OT' => array('simpletext', __('Overtime')),
+			'PB' => array('simpletext', __('Black Player')),
+			'PC' => array('simpletext', __('Place')),
+			'PW' => array('simpletext', __('White Player')),
+			'RE' => array('simpletext', __('Result')),
+			'RO' => array('simpletext', __('Round')),
+			'RU' => array('simpletext', __('Rules')),
+			'SO' => array('simpletext', __('Source')),
+			'ST' => array('number',     __('Variations Style')),
+			'SZ' => array('number-composed', __('Board Size')),
+			'TM' => array('real',       __('Time Limit')),
+			'US' => array('simpletext', __('Transcriber')),
+			'WR' => array('simpletext', __('White Rank')),
+			'WT' => array('simpletext', __('White Team')),
+		);
+		preg_match_all('/('.join('|', array_keys($game_attrs)).')\[([^\]]+|\\\])*\]/',
+				$contents, $matches, PREG_SET_ORDER);
+		foreach ($matches as $m) {
+			list($type, $label) = $game_attrs[$m[1]];
+			$val = $m[2];
+			switch ($type) {
+				case 'text':
+					$val = $this->clean_sgf_text($val);
+					break;
+				case 'simpletext':
+					$val = $this->clean_sgf_simpletext($val);
+					break;
+				case 'simpletext-composed':
+					$parts = $this->clean_sgf_composed($val);
+					$val = array();
+					foreach ($parts as $v)
+						$val[] = $this->clean_sgf_simpletext($v);
+					break;
+				case 'number':
+					$val = (int)intval(trim($val));
+					break;
+				case 'number-composed':
+					$parts = $this->clean_sgf_composed($val);
+					$val = array();
+					foreach ($parts as $v)
+						$val[] = (int)intval(trim($v));
+					break;
+				case 'real':
+					$val = (float)floatval(trim($val));
+					break;
+			}
+			$meta[$m[1]] = $val;
 		}
 
-		# Get the board size information
-		if (preg_match('/SZ\[(\d+)\]/', $contents, $matches))
-			$meta['SZ'] = (int)$matches[1];
+		# Only process go SGF files
+		if (!$meta['GM'] || $meta['GM'] != 1)
+			return $meta;
 
 		# Searches same set of SGF attributes as EidoGo does for problem mode
 		preg_match_all('/(W|B|AW|AB|LB)((\[([a-z]{2}(:[a-z]{2})?)\]\s*)+)/s', $contents, $matches);
@@ -283,7 +406,7 @@ html;
 			$pointlist = trim($pointlist);
 			$points = preg_split('/(\]\s*\[|:)/', substr($pointlist, 1, strlen($pointlist)-2));
 			foreach ($points as $p) {
-				if ($p == '' || $p == 'tt' && (!$meta['SZ'] || $meta['SZ'] <= 19))
+				if ($this->is_pass($p, $meta['SZ']))
 					continue; # skip passes
 				$x = ord($p[0]) - ord('a');
 				$y = ord($p[1]) - ord('a');
@@ -430,6 +553,7 @@ html;
 			$params['problemcolor'] = strtoupper(substr($params['problemcolor'], 0, 1));
 		elseif (preg_match('/PL\[(W|B)\]/', $sgf_data, $pgroups))
 			$params['problemcolor'] = $pgroups[1];
+		# TODO: Work for sgfUrl things
 
 		# Default to view mode except if we're a problem
 		if (!$params['mode'] && $theme != 'problem')

@@ -157,7 +157,8 @@
 	line-height: 13px;
 }
 
-.wp-eidogo-problem .comments .comment-status {
+.wp-eidogo-problem .comments .comment-status,
+.wp-eidogo-problem .comments .comment-pass {
 	margin-bottom: 0;
 }
 
