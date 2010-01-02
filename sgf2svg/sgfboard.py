@@ -94,10 +94,8 @@ class GoBoard(object):
         self.move_number += 1
         if color == 'B':
             self.to_play = 'W'
-            opp = 'B'
         else:
             self.to_play = 'B'
-            opp = 'W'
 
         if len(points) > 1:
             raise ValueError('A move must specify exactly one point.')
@@ -119,7 +117,7 @@ class GoBoard(object):
         for a, b in self._adjacent:
             if not self._valid_point(x+a, y+b):
                 continue
-            if self.cur_stones[x+a][y+b] == opp:
+            if self.cur_stones[x+a][y+b] == self.to_play:
                 self._check_capture(x+a, y+b)
 
         self._check_capture(x, y)
