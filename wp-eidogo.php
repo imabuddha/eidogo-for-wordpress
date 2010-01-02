@@ -142,6 +142,13 @@ class WpEidoGoPlugin {
 		add_filter('the_excerpt',  array(&$this, 'embed_markup'), 99);
 		add_filter('comment_text', array(&$this, 'embed_markup'), 99);
 
+		add_filter('the_content_rss',  array(&$this, 'prepare_markup'), 9);
+		add_filter('the_excerpt_rss',  array(&$this, 'prepare_markup'), 9);
+		add_filter('comment_text_rss', array(&$this, 'prepare_markup'), 9);
+		add_filter('the_content_rss',  array(&$this, 'embed_markup'), 99);
+		add_filter('the_excerpt_rss',  array(&$this, 'embed_markup'), 99);
+		add_filter('comment_text_rss', array(&$this, 'embed_markup'), 99);
+
 		# For necessary stylesheets and javascript files
 		add_action('wp_head', array(&$this, 'eidogo_head_tags'));
 		add_action('admin_head', array(&$this, 'eidogo_head_tags_admin'));
@@ -665,14 +672,23 @@ javascript;
 			</div>
 html;
 
-		return "\n\n[sgfPrepared id=\"".($this->sgf_count++)."\"]\n\n";
+		if (is_feed())
+			if ($params['caption'])
+				return "\n\n[Embedded SGF File: ".htmlspecialchars($params['caption'])."]\n\n";
+			else
+				return "\n\n[Embedded SGF File]\n\n";
+		else
+			return "\n\n[sgfPrepared id=\"".($this->sgf_count++)."\"]\n\n";
 
 	} # }}}
 
 	function embed_sgf($matches) { # {{{
 		list($whole_tag, $id) = $matches;
 
-		return $this->sgf_prepared_markup[$id];
+		if (is_feed())
+			return '<p>[Embedded SGF File]</p>';
+		else
+			return $this->sgf_prepared_markup[$id];
 	} # }}}
 
 	function prepare_markup($content) { # {{{

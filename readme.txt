@@ -191,6 +191,7 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 * Changed `embed_attachment()` to not work by invoking filters, which had
   weird side effects like getting sociable stuck inside the problem widget
 * Somewhat improved SGF parser and storing additional SGF metadata
+* Somewhat more useful output in RSS feed
 
 = 0.8.4 =
 * Using latest EidoGo from github instead of 1.2 release
