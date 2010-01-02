@@ -162,7 +162,7 @@ def make_svg(board, options):
     crop_width = board_width
     crop_height = board_height
     crop_left = crop_top = 0
-    if options.crop and board.left_edge is not None:
+    if (options.crop or options.crop_whole_tree) and board.left_edge is not None:
         left = max(0, board.left_edge-options.crop_padding)
         top = max(0, board.top_edge-options.crop_padding)
         right = min(board.width-1, board.right_edge+options.crop_padding)
@@ -207,6 +207,8 @@ def main():
             " (defaults to 0 - the starting position)", metavar='MOVE')
     parser.add_option('-c', '--crop', action='store_true',
             help="crop to used area of board (good for problems)")
+    parser.add_option('-C', '--crop-whole-tree', action='store_true',
+            help="crop to used area of board walking the entire tree to determine crop area")
     parser.add_option('-p', '--crop-padding', type="int", default=1,
             help="pad cropped area by SIZE points on each side (default 1)", metavar='SIZE')
     parser.add_option('-s', '--stone-size', type="float", default=19,
@@ -232,9 +234,28 @@ def main():
     # Process SGF file
     sgf_parser = sgflib.SGFParser(sgf_data)
     board = sgfboard.GoBoard()
-    # In collections, will only utilize the first game
     game = sgf_parser.parse()[options.game_number]
     cursor = game.cursor()
+
+    if (options.crop_whole_tree):
+        board.execute(cursor.node) # Initial setup node
+        stack = [0]
+        while len(stack):
+            while len(stack) and stack[-1] >= len(cursor.children):
+                stack.pop()
+                if len(stack):
+                    cursor.previous()
+                    stack[-1] += 1
+            while len(stack) and not cursor.atEnd:
+                cursor.next(stack[-1])
+                stack.append(0)
+                sys.stdout.write('%4d' % cursor.index)
+                board.execute(cursor.node)
+            sys.stdout.write('\n')
+        #
+        board.reset_board(reset_edges=False)
+        cursor.reset()
+    #
     board.execute(cursor.node) # Initial setup node
     while not cursor.atEnd and board.move_number < options.move_number:
         cursor.next()

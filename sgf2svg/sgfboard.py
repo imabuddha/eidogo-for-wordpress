@@ -39,14 +39,15 @@ class GoBoard(object):
             ret.append([val] * height)
         return ret
 
-    def reset_board(self):
+    def reset_board(self, reset_edges=True):
         self.cur_stones = self._make_empty_board(self.width, self.height)
         self.cur_DD = self._make_empty_board(self.width, self.height, False)
         self.cur_VW = self._make_empty_board(self.width, self.height, False)
         self.move_numbers = self._make_empty_board(self.width, self.height)
         self.black_prisoners = 0
         self.white_prisoners = 0
-        self.left_edge = self.right_edge = self.top_edge = self.bottom_edge = None
+        if reset_edges:
+            self.left_edge = self.right_edge = self.top_edge = self.bottom_edge = None
 
     def execute(self, node):
         if 'SZ' in node.data:
@@ -57,7 +58,7 @@ class GoBoard(object):
                 self.width, self.height = [ int(x) for x in sizes ]
             else:
                 raise ValueError('Board size must be 1 or 2 values (%s)' % repr(node['SZ'][0]))
-            self.reset_board()
+            self.reset_board(reset_edges=False)
 
         for prop, kind in (('AB', 'B'), ('AW', 'W'), ('AE', None)):
             if prop in node.data:

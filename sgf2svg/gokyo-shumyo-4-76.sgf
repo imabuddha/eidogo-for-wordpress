@@ -1,23 +1,23 @@
 (;GM[1]FF[4]CA[UTF-8]AP[CGoban:3]ST[2]
 RU[Japanese]SZ[19]KM[6.50]
-PW[White]PB[Black]SO[Gokyo Shumyo]AW[fc][gc][fe:he][ef][if][eg][ig]AB[cc][ec][hc][ed][id][ee][ie][ff:hf]TR[ff:hf]C[Rescue the marked stones.]
+GN[Gokyo Shumyo, Section 4, Problem 76]PW[White]PB[Black]SO[Gokyo Shumyo]AW[fc][gc][fe][ge][he][ef][if][eg][ig]AB[cc][ec][hc][ed][id][ee][ie][ff][gf][hf]TR[ff][gf][hf]C[Rescue the marked stones.]
 (;B[fd]
 ;W[gd]
 ;B[hd]
 ;W[hb]
 (;B[ga]
 ;W[eb]
-;B[fa]C[<em class="right">Correct. No matter what happens, white will never get more than two liberties. The Japanese call this tesuji <em>tanuki no hara tsuzumi</em> (タヌキ(狸)の腹鼓) - the raccoon-dog drums his belly.</em>])
+;B[fa]C[<em class="right">Correct.</em> No matter what happens, white will never get more than two liberties. The Japanese call this tesuji <em>tanuki no hara tsuzumi</em> (狸の腹鼓) — the raccoon-dog drums his belly.])
 (;B[fb]
 ;W[gb]
 (;B[ib]
-;W[eb]TR[fb]C[<em class="wrong">Because white can capture the marked stones, white will have enough liberties to win the capturing race.</em>])
+;W[eb]TR[fb]C[<em class="wrong">Wrong.</em> Because white can capture the marked stones, white will have enough liberties to win the capturing race.])
 (;B[eb]
-;W[ib]C[<em class="wrong">Now white will have plenty of liberties to win the capturing race.</em>])
+;W[ib]C[<em class="wrong">Wrong.</em> Now white will have plenty of liberties to win the capturing race.])
 (;B[ea]
-;W[ib]C[<em class="wrong">Now white will have plenty of liberties to win the capturing race.</em>])
+;W[ib]C[<em class="wrong">Wrong.</em> Now white will have plenty of liberties to win the capturing race.])
 (;B[db]
-;W[ib]C[<em class="wrong">Now white will have plenty of liberties to win the capturing race.</em>]))
+;W[ib]C[<em class="wrong">Wrong.</em> Now white will have plenty of liberties to win the capturing race.]))
 (;B[ib]
 ;W[eb]
 (;B[db]
@@ -25,54 +25,54 @@ PW[White]PB[Black]SO[Gokyo Shumyo]AW[fc][gc][fe:he][ef][if][eg][ig]AB[cc][ec][hc
 (;B[gb]
 ;W[fb]
 (;B[ha]
-;W[gg]TR[ff][gf][hf]C[<em class="wrong">The marked stones are captured.</em>])
+;W[gg]TR[ff][gf][hf]C[<em class="wrong">Wrong.</em> The marked stones are captured.])
 (;B[ga]
-;W[gg]TR[ff][gf][hf]C[<em class="wrong">The marked stones are captured.</em>]))
+;W[gg]TR[ff][gf][hf]C[<em class="wrong">Wrong.</em> The marked stones are captured.]))
 (;B[fb]
 ;W[gb]
 (;B[ea]
-;W[gg]TR[ff][gf][hf]C[<em class="wrong">The marked stones are captured.</em>])
+;W[gg]TR[ff][gf][hf]C[<em class="wrong">Wrong.</em> The marked stones are captured.])
 (;B[fa]
-;W[gg]TR[ff][gf][hf]C[<em class="wrong">The marked stones are captured.</em>]))
+;W[gg]TR[ff][gf][hf]C[<em class="wrong">Wrong.</em> The marked stones are captured.]))
 (;B[ha]
-;W[gg]TR[ff][gf][hf]C[<em class="wrong">The marked stones are captured.</em>])
+;W[gg]TR[ff][gf][hf]C[<em class="wrong">Wrong.</em> The marked stones are captured.])
 (;B[ea]
-;W[gg]TR[ff][gf][hf]C[<em class="wrong">The marked stones are captured.</em>])
+;W[gg]TR[ff][gf][hf]C[<em class="wrong">Wrong.</em> The marked stones are captured.])
 (;B[ga]
-;W[gg]TR[ff][gf][hf]C[<em class="wrong">The marked stones are captured.</em>])
+;W[gg]TR[ff][gf][hf]C[<em class="wrong">Wrong.</em> The marked stones are captured.])
 (;B[fa]
-;W[gg]TR[ff][gf][hf]C[<em class="wrong">The marked stones are captured.</em>]))
+;W[gg]TR[ff][gf][hf]C[<em class="wrong">Wrong.</em> The marked stones are captured.]))
 (;B[gb]
 ;W[fb]
 (;B[ha]
-;W[db]C[<em class="wrong">Now white will have plenty of liberties to win the capturing race.</em>])
+;W[db]C[<em class="wrong">Wrong.</em> Now white will have plenty of liberties to win the capturing race.])
 (;B[ga]
-;W[db]C[<em class="wrong">Now white will have plenty of liberties to win the capturing race.</em>])
+;W[db]C[<em class="wrong">Wrong.</em> Now white will have plenty of liberties to win the capturing race.])
 (;B[db]
-;W[ga]C[<em class="wrong">Because black needs an extra approach move white will have enough liberties to win the capturing race.</em>])))
+;W[ga]C[<em class="wrong">Wrong.</em> Because black needs an extra approach move white will have enough liberties to win the capturing race.])))
 (;B[gb]
 ;W[fb]
 ;B[eb]
 ;W[ga]
 ;B[ib]
-;W[ea]C[<em class="wrong">This will be no better than ko.</em>]))
+;W[ea]C[<em class="wrong">Wrong.</em> This will be no better than ko.]))
 (;B[gd]
 ;W[fd]
 ;B[hd]
 ;W[hb]
 (;B[ga]
 ;W[eb]
-;B[fa]C[<em class="right">Correct. No matter what happens, white will never get more than two liberties. The Japanese call this tesuji <em>tanuki no hara tsuzumi</em> (タヌキ(狸)の腹鼓) - the raccoon-dog drums his belly.</em>])
+;B[fa]C[<em class="right">Correct.</em> No matter what happens, white will never get more than two liberties. The Japanese call this tesuji <em>tanuki no hara tsuzumi</em> (狸の腹鼓) — the raccoon-dog drums his belly.])
 (;B[fb]
 ;W[gb]
 (;B[ib]
-;W[eb]TR[fb]C[<em class="wrong">Because white can capture the marked stones, white will have enough liberties to win the capturing race.</em>])
+;W[eb]TR[fb]C[<em class="wrong">Wrong.</em> Because white can capture the marked stones, white will have enough liberties to win the capturing race.])
 (;B[eb]
-;W[ib]C[<em class="wrong">Now white will have plenty of liberties to win the capturing race.</em>])
+;W[ib]C[<em class="wrong">Wrong.</em> Now white will have plenty of liberties to win the capturing race.])
 (;B[ea]
-;W[ib]C[<em class="wrong">Now white will have plenty of liberties to win the capturing race.</em>])
+;W[ib]C[<em class="wrong">Wrong.</em> Now white will have plenty of liberties to win the capturing race.])
 (;B[db]
-;W[ib]C[<em class="wrong">Now white will have plenty of liberties to win the capturing race.</em>]))
+;W[ib]C[<em class="wrong">Wrong.</em> Now white will have plenty of liberties to win the capturing race.]))
 (;B[ib]
 ;W[eb]
 (;B[db]
@@ -80,60 +80,60 @@ PW[White]PB[Black]SO[Gokyo Shumyo]AW[fc][gc][fe:he][ef][if][eg][ig]AB[cc][ec][hc
 (;B[gb]
 ;W[fb]
 (;B[ha]
-;W[gg]TR[ff][gf][hf]C[<em class="wrong">The marked stones are captured.</em>])
+;W[gg]TR[ff][gf][hf]C[<em class="wrong">Wrong.</em> The marked stones are captured.])
 (;B[ga]
-;W[gg]TR[ff][gf][hf]C[<em class="wrong">The marked stones are captured.</em>]))
+;W[gg]TR[ff][gf][hf]C[<em class="wrong">Wrong.</em> The marked stones are captured.]))
 (;B[fb]
 ;W[gb]
 (;B[ea]
-;W[gg]TR[ff][gf][hf]C[<em class="wrong">The marked stones are captured.</em>])
+;W[gg]TR[ff][gf][hf]C[<em class="wrong">Wrong.</em> The marked stones are captured.])
 (;B[fa]
-;W[gg]TR[ff][gf][hf]C[<em class="wrong">The marked stones are captured.</em>]))
+;W[gg]TR[ff][gf][hf]C[<em class="wrong">Wrong.</em> The marked stones are captured.]))
 (;B[ha]
-;W[gg]TR[ff][gf][hf]C[<em class="wrong">The marked stones are captured.</em>])
+;W[gg]TR[ff][gf][hf]C[<em class="wrong">Wrong.</em> The marked stones are captured.])
 (;B[ea]
-;W[gg]TR[ff][gf][hf]C[<em class="wrong">The marked stones are captured.</em>])
+;W[gg]TR[ff][gf][hf]C[<em class="wrong">Wrong.</em> The marked stones are captured.])
 (;B[ga]
-;W[gg]TR[ff][gf][hf]C[<em class="wrong">The marked stones are captured.</em>])
+;W[gg]TR[ff][gf][hf]C[<em class="wrong">Wrong.</em> The marked stones are captured.])
 (;B[fa]
-;W[gg]TR[ff][gf][hf]C[<em class="wrong">The marked stones are captured.</em>]))
+;W[gg]TR[ff][gf][hf]C[<em class="wrong">Wrong.</em> The marked stones are captured.]))
 (;B[gb]
 ;W[fb]
 (;B[ha]
-;W[db]C[<em class="wrong">Now white will have plenty of liberties to win the capturing race.</em>])
+;W[db]C[<em class="wrong">Wrong.</em> Now white will have plenty of liberties to win the capturing race.])
 (;B[ga]
-;W[db]C[<em class="wrong">Now white will have plenty of liberties to win the capturing race.</em>])
+;W[db]C[<em class="wrong">Wrong.</em> Now white will have plenty of liberties to win the capturing race.])
 (;B[db]
-;W[ga]C[<em class="wrong">Because black needs an extra approach move white will have enough liberties to win the capturing race.</em>])))
+;W[ga]C[<em class="wrong">Wrong.</em> Because black needs an extra approach move white will have enough liberties to win the capturing race.])))
 (;B[gb]
 ;W[fb]
 ;B[eb]
 ;W[ga]
 ;B[ib]
-;W[ea]C[<em class="wrong">This will be no better than ko.</em>]))
+;W[ea]C[<em class="wrong">Wrong.</em> This will be no better than ko.]))
 (;B[gb]
-;W[hg]LB[fd:1][gd:2][hd:3][fg:1][gg:2]TR[ff][gf][hf]C[<em class="wrong">White is ahead in liberties - the marked stones will be captured. :-(</em>])
+;W[hg]LB[fd:1][gd:2][hd:3][fg:1][gg:2]TR[ff][gf][hf]C[<em class="wrong">Wrong.</em> White is ahead in liberties - the marked stones will be captured. :-(])
 (;B[fb]
-;W[hg]LB[fd:1][gd:2][hd:3][fg:1][gg:2]TR[ff][gf][hf]C[<em class="wrong">White is ahead in liberties - the marked stones will be captured. :-(</em>])
+;W[hg]LB[fd:1][gd:2][hd:3][fg:1][gg:2]TR[ff][gf][hf]C[<em class="wrong">Wrong.</em> White is ahead in liberties - the marked stones will be captured. :-(])
 (;B[gh]
 ;W[gg]
 (;B[hg]
 ;W[hh]
 ;B[fg]
-;W[fh]TR[ff][gf][hf][fg][hg]C[<em class="wrong">You're caught in a crane's nest. The marked stones are captured.</em>])
+;W[fh]TR[ff][gf][hf][fg][hg]C[<em class="wrong">Wrong.</em> You're caught in a crane's nest. The marked stones are captured.])
 (;B[fg]
 ;W[fh]
 ;B[hg]
-;W[hh]TR[ff][gf][hf][fg][hg]C[<em class="wrong">You're caught in a crane's nest. The marked stones are captured.</em>]))
+;W[hh]TR[ff][gf][hf][fg][hg]C[<em class="wrong">Wrong.</em> You're caught in a crane's nest. The marked stones are captured.]))
 (;B[hh]
 ;W[hg]
 (;B[gg]
-;W[gh]TR[ff][gf][hf][gg]C[<em class="wrong">The marked stones are captured.</em>])
+;W[gh]TR[ff][gf][hf][gg]C[<em class="wrong">Wrong.</em> The marked stones are captured.])
 (;B[fg]
-;W[fh]TR[ff][gf][hf][fg]C[<em class="wrong">The marked stones are captured.</em>]))
+;W[fh]TR[ff][gf][hf][fg]C[<em class="wrong">Wrong.</em> The marked stones are captured.]))
 (;B[fh]
 ;W[fg]
 (;B[gg]
-;W[gh]TR[ff][gf][hf][gg]C[<em class="wrong">The marked stones are captured.</em>])
+;W[gh]TR[ff][gf][hf][gg]C[<em class="wrong">Wrong.</em> The marked stones are captured.])
 (;B[hg]
-;W[hh]TR[ff][gf][hf][hg]C[<em class="wrong">The marked stones are captured.</em>])))
+;W[hh]TR[ff][gf][hf][hg]C[<em class="wrong">Wrong.</em> The marked stones are captured.])))
