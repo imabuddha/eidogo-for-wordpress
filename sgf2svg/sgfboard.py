@@ -11,6 +11,7 @@ class GoBoard(object):
     cur_DD = None
     cur_VW = None
     move_numbers = None
+    current_node = None
 
     black_prisoners = 0
     white_prisoners = 0
@@ -50,6 +51,8 @@ class GoBoard(object):
             self.left_edge = self.right_edge = self.top_edge = self.bottom_edge = None
 
     def execute(self, node):
+        self.current_node = node
+
         if 'SZ' in node.data:
             sizes = node['SZ'][0].split(':')
             if len(sizes) == 1:
@@ -67,6 +70,18 @@ class GoBoard(object):
         for prop in ('B', 'W'):
             if prop in node.data:
                 self.do_move(prop, node[prop])
+
+        mpoints = []
+        if 'LB' in node.data:
+            mpoints.extend([ v.split(':', 1)[0] for v in node['LB'] ])
+
+        for prop in ('CR', 'MA', 'SQ', 'TR', 'DD', 'SL', 'LN', 'AR'):
+            if prop not in node.data:
+                continue
+            mpoints.extend(node[prop])
+
+        for x, y in self.convert_points(mpoints):
+            self._crop_point(x, y)
 
         if 'PL' in node.data:
             self.to_play = note['PL'][0]
