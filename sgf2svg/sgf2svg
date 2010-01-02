@@ -15,19 +15,19 @@ SVG_DEFS = '''
 <defs>
     <style type="text/css"><![CDATA[
 
-    #stoneB circle {
+    circle.stoneB {
         fill: url(#blackStoneGradient);
         stroke: #000000;
         stroke-width: 1;
     }
 
-    #stoneW circle {
+    circle.stoneW {
         fill: url(#whiteStoneGradient);
         stroke: #808080;
         stroke-width: 1;
     }
 
-    #hoshi circle {
+    circle.hoshi {
         fill: #705f36;
     }
 
@@ -57,13 +57,13 @@ SVG_DEFS = '''
     </radialGradient>
 
     <symbol id="stoneB" viewBox="-9.5 -9.5 19 19">
-        <circle r="9" />
+        <circle class="stoneB" r="9" />
     </symbol>
     <symbol id="stoneW" viewBox="-9.5 -9.5 19 19">
-        <circle r="9" />
+        <circle class="stoneW" r="9" />
     </symbol>
     <symbol id="hoshi" viewBox="-2 -2 4 4">
-        <circle r="2" />
+        <circle class="hoshi" r="2" />
     </symbol>
 
 </defs>
