@@ -15,13 +15,13 @@ SVG_DEFS = '''
 <defs>
     <style type="text/css"><![CDATA[
 
-    #blackStone circle {
+    #stoneB circle {
         fill: url(#blackStoneGradient);
         stroke: #000000;
         stroke-width: 1;
     }
 
-    #whiteStone circle {
+    #stoneW circle {
         fill: url(#whiteStoneGradient);
         stroke: #808080;
         stroke-width: 1;
@@ -56,10 +56,10 @@ SVG_DEFS = '''
         <stop stop-color="#d0d0d0" stop-opacity="1.0" offset="1.0" />
     </radialGradient>
 
-    <symbol id="blackStone" viewBox="-9.5 -9.5 19 19">
+    <symbol id="stoneB" viewBox="-9.5 -9.5 19 19">
         <circle r="9" />
     </symbol>
-    <symbol id="whiteStone" viewBox="-9.5 -9.5 19 19">
+    <symbol id="stoneW" viewBox="-9.5 -9.5 19 19">
         <circle r="9" />
     </symbol>
     <symbol id="hoshi" viewBox="-2 -2 4 4">
@@ -69,7 +69,7 @@ SVG_DEFS = '''
 </defs>
 '''
 SVG_BODY = '''
-<g id="container">
+<g id="container" transform="translate(-%(crop_left)s, -%(crop_top)s)">
     <g id="board">
     %(board)s
     </g>
@@ -149,24 +149,44 @@ def make_svg(board, options):
     if board.width == board.height and board.width in HOSHIS:
         for point in HOSHIS[board.width]:
             x, y = ( options.board_padding + (p+0.5)*options.stone_size-0.5*options.hoshi_size for p in point )
-            board_tags.append(svg_tag('use', x=x, y=y,
-                width=options.hoshi_size, height=options.hoshi_size, xlink_Chref='#hoshi'))
+            board_tags.append(svg_tag('use', xlink_Chref='#hoshi',
+                x=x, y=y, width=options.hoshi_size, height=options.hoshi_size))
 
     for y in range(board.height):
         for x in range(board.width):
-            if board.cur_stones[x][y] is None:
-                continue
             xp, yp = ( options.board_padding + p*options.stone_size for p in (x, y) )
-            if board.cur_stones[x][y] == 'B':
-                href = '#blackStone'
-            else:
-                href = '#whiteStone'
-            stone_tags.append(svg_tag('use', x=xp, y=yp,
-                width=options.stone_size, height=options.stone_size, xlink_Chref=href))
+            if board.cur_stones[x][y] is not None:
+                stone_tags.append(svg_tag('use', xlink_Chref='#stone'+board.cur_stones[x][y],
+                    x=xp, y=yp, width=options.stone_size, height=options.stone_size))
+
+    crop_width = board_width
+    crop_height = board_height
+    crop_left = crop_top = 0
+    if options.crop and board.left_edge is not None:
+        left = max(0, board.left_edge-options.crop_padding)
+        top = max(0, board.top_edge-options.crop_padding)
+        right = min(board.width-1, board.right_edge+options.crop_padding)
+        bottom = min(board.height-1, board.bottom_edge+options.crop_padding)
+        crop_width = options.stone_size * (right-left+1)
+        crop_height = options.stone_size * (bottom-top+1)
+        if left == 0:
+            crop_width += options.board_padding
+        else:
+            crop_left = options.board_padding + options.stone_size * left
+        if top == 0:
+            crop_height += options.board_padding
+        else:
+            crop_top = options.board_padding + options.stone_size * top
+        if right == board.width-1:
+            crop_width += options.board_padding
+        if bottom == board.height-1:
+            crop_height += options.board_padding
 
     svg_vars = {
-        'width': board_width,
-        'height': board_height,
+        'width': crop_width,
+        'height': crop_height,
+        'crop_left': crop_left,
+        'crop_top': crop_top,
         'board': '\n'.join(board_tags),
         'stones': '\n'.join(stone_tags),
         'markers': '\n'.join(marker_tags),
@@ -185,6 +205,10 @@ def main():
     parser.add_option('-m', '--move-number', type="int", default=0,
             help="jump to move number MOVE in the main variation" +
             " (defaults to 0 - the starting position)", metavar='MOVE')
+    parser.add_option('-c', '--crop', action='store_true',
+            help="crop to used area of board (good for problems)")
+    parser.add_option('-p', '--crop-padding', type="int", default=1,
+            help="pad cropped area by SIZE points on each side (default 1)", metavar='SIZE')
     parser.add_option('-s', '--stone-size', type="float", default=19,
             help="stone size (in pixels - default 19)", metavar='SIZE')
     parser.add_option('-H', '--hoshi-size', type="float", default=4,

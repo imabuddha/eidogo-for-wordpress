@@ -46,6 +46,7 @@ class GoBoard(object):
         self.move_numbers = self._make_empty_board(self.width, self.height)
         self.black_prisoners = 0
         self.white_prisoners = 0
+        self.left_edge = self.right_edge = self.top_edge = self.bottom_edge = None
 
     def execute(self, node):
         if 'SZ' in node.data:
@@ -69,8 +70,22 @@ class GoBoard(object):
         if 'PL' in node.data:
             self.to_play = note['PL'][0]
 
+    def _crop_point(self, x, y):
+        if self.left_edge is None or x < self.left_edge:
+            self.left_edge = x
+
+        if self.right_edge is None or x > self.right_edge:
+            self.right_edge = x
+
+        if self.top_edge is None or y < self.top_edge:
+            self.top_edge = y
+
+        if self.bottom_edge is None or y > self.bottom_edge:
+            self.bottom_edge = y
+
     def add_stones(self, color, points):
         for x, y in self.convert_points(points):
+            self._crop_point(x, y)
             if not self._valid_point(x, y):
                 continue
             self.cur_stones[x][y] = color
@@ -92,7 +107,11 @@ class GoBoard(object):
             return # a pass
 
         x, y = self.convert_points(points)[0]
+        if not self._valid_point(x, y):
+            raise ValueError('Invalid move point specified');
+
         self.cur_stones[x][y] = color
+        self._crop_point(x, y)
         if self.move_numbers[x][y] is None:
             self.move_numbers[x][y] = []
         self.move_numbers[x][y].append(self.move_number)
