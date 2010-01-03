@@ -47,6 +47,7 @@ class GoBoard(object):
         self.move_numbers = self._make_empty_board(self.width, self.height)
         self.black_prisoners = 0
         self.white_prisoners = 0
+        self.move_number = 0
         if reset_edges:
             self.left_edge = self.right_edge = self.top_edge = self.bottom_edge = None
 

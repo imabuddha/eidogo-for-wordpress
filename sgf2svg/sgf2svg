@@ -71,7 +71,7 @@ SVG_DEFS = '''
 
     .markerLB {
         font-family: %(font_family)s;
-        font-size: %(font_size)s;
+        font-size: %(font_size)spx;
         text-anchor: middle;
         fill: #ff0000;
         font-weight: bold;
@@ -267,7 +267,6 @@ def make_svg(board, options):
                 theta = math.asin((y2-y1)/length)
                 if x2 <= x1:
                     theta = math.pi - theta
-                print start, end, math.degrees(theta)
                 x2 -= options.line_width*arrowhead_fix*math.cos(theta)
                 y2 -= options.line_width*arrowhead_fix*math.sin(theta)
             marker_tags.append(svg_tag('line', _class='marker'+prop,
