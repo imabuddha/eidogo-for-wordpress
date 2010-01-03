@@ -3,11 +3,12 @@
 import sgflib, sgfboard, optparse, sys, math
 
 # SVG Templates {{{
-# for triangle
+# Various precalc
 r = 3.0
 rp = r/math.cos(math.radians(60))
 x = r*math.tan(math.radians(60))
 points = "%s,%s %s,%s %s,%s" % (0,1.5-rp, x,r+1.5, -x,r+1.5)
+arrowhead_fix = 3
 #
 SVG_HEAD = '''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg xmlns:svg="http://www.w3.org/2000/svg"
@@ -68,12 +69,26 @@ SVG_DEFS = '''
         fill-opacity: 0.5;
     }
 
-    text.LB {
+    .markerLB {
         font-family: %(font_family)s;
         font-size: %(font_size)s;
         text-anchor: middle;
         fill: #ff0000;
         font-weight: bold;
+    }
+
+    .markerLN, .markerAR {
+        stroke: #0000aa;
+        stroke-width: %(line_width)s;
+        stroke-linecap: round;
+    }
+
+    #arrHead {
+        fill: #0000aa;
+    }
+
+    .markerAR {
+        marker-end: url(#arrHead);
     }
 
     ]]></style>
@@ -128,6 +143,11 @@ SVG_DEFS = '''
     <symbol id="markerDD" viewBox="0 0 1 1">
         <rect class="markerDD" x="0" y="0" width="1" height="1" />
     </symbol>
+
+    <marker id="arrHead" orient="auto" refX="''' + str(4-arrowhead_fix) + '''" refY="2"
+            markerWidth="5" markerHeight="5">
+        <polygon points="4,2 0,4 1,2 0,0" />
+    </marker>
 
 </defs>
 '''
@@ -232,6 +252,27 @@ def make_svg(board, options):
                 stone_tags.append(svg_tag('use', xlink_Chref='#stone'+board.cur_stones[x][y],
                     x=xp, y=yp, width=options.stone_size, height=options.stone_size))
 
+    # Lines and Arrows
+    for prop in ('LN', 'AR'):
+        if prop not in board.current_node.data:
+            continue
+        for item in board.current_node[prop]:
+            start, end = board.convert_points(item.split(':'))
+            if start == end:
+                continue # illegal
+            x1, y1, x2, y2 = ( options.board_padding + (p+0.5)*options.stone_size for p in start + end )
+            if prop == 'AR':
+                # Adjust for the arrowhead which overshots our target point
+                length = math.sqrt((x2-x1)**2 + (y2-y1)**2)
+                theta = math.asin((y2-y1)/length)
+                if x2 <= x1:
+                    theta = math.pi - theta
+                print start, end, math.degrees(theta)
+                x2 -= options.line_width*arrowhead_fix*math.cos(theta)
+                y2 -= options.line_width*arrowhead_fix*math.sin(theta)
+            marker_tags.append(svg_tag('line', _class='marker'+prop,
+                x1=x1, y1=y1, x2=x2, y2=y2))
+
     # Labels
     if 'LB' in board.current_node.data:
         for val in board.current_node['LB']:
@@ -239,7 +280,7 @@ def make_svg(board, options):
             x, y = board.convert_points([points])[0]
             xp, yp = ( options.board_padding + (p+0.5)*options.stone_size for p in (x, y) )
             yp += options.font_size/2.5
-            marker_tags.append(svg_tag('text', attr_escape(label), _class='LB', x=xp, y=yp,
+            marker_tags.append(svg_tag('text', attr_escape(label), _class='markerLB', x=xp, y=yp,
                 width=options.stone_size, height=options.stone_size))
 
     # Markers
@@ -251,6 +292,9 @@ def make_svg(board, options):
             xp, yp = ( options.board_padding + p*options.stone_size for p in (x, y) )
             marker_tags.append(svg_tag('use', xlink_Chref='#marker'+prop,
                 x=xp, y=yp, width=options.stone_size, height=options.stone_size))
+    # TODO: The handling for DD is bugged. It uses only the current node's DD
+    # entries (EidoGo does the same.) DD is supposed to be inherited though
+    # (though like zero SGF editors support DD let alone do it correctly).
 
     crop_width = board_width
     crop_height = board_height
@@ -285,6 +329,7 @@ def make_svg(board, options):
         'markers': '\n'.join(marker_tags),
         'font_family': options.font_family,
         'font_size': options.font_size,
+        'line_width': options.line_width,
     }
     return (SVG_HEAD + SVG_DEFS + SVG_BODY + SVG_FOOT) % svg_vars
 
@@ -310,25 +355,29 @@ def main():
     parser.add_option('-p', '--crop-padding', type="int", default=1,
             help="pad cropped area by SIZE points on each side (default 1)", metavar='SIZE')
 
+    parser.add_option('-b', '--board-padding', type="float",
+            help="pad the board by PADDING pixels (default 5)", metavar='PADDING')
     parser.add_option('-s', '--stone-size', type="float", default=19,
             help="stone size (in pixels - default 19)", metavar='SIZE')
-    parser.add_option('-H', '--hoshi-size', type="float", default=None,
+    parser.add_option('-H', '--hoshi-size', type="float",
             help="hoshi size (in pixels - default 4)", metavar='SIZE')
-
-    parser.add_option('-f', '--font-size', type="float", default=None,
+    parser.add_option('-l', '--line-width', type="float",
+            help="width of lines and arrows (LN and AR elements; default 3)", metavar='SIZE')
+    parser.add_option('-f', '--font-size', type="float",
             help="font size (default 12)", metavar='SIZE')
     parser.add_option('-F', '--font-family', default='Arial,Helvetica,sans-serif',
             help='font family (default Arial,Helvetica,sans-serif)', metavar='SIZE')
 
-    parser.add_option('-b', '--board-padding', type="float", default=5,
-            help="pad the board by PADDING pixels (default 5)", metavar='PADDING')
-
     options, args = parser.parse_args()
 
+    if options.board_padding is None:
+        options.board_padding = round(5.0*options.stone_size/19.0)
     if options.hoshi_size is None:
         options.hoshi_size = 4.0*options.stone_size/19.0
     if options.font_size is None:
         options.font_size = 12.0*options.stone_size/19.0
+    if options.line_width is None:
+        options.line_width = 3.0*options.stone_size/19.0
 
     # Get SGF data
     if len(args) > 1:
