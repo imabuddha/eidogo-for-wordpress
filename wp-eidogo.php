@@ -616,6 +616,9 @@ html;
 			$embed_method = 'unknown';
 		}
 
+		if ($params['loadpath'] && preg_match('/^\s*\d[\d,\s]+\d\s*$/', $params['loadpath']))
+			$params['loadpath'] = preg_split('/\s*,\s*/', trim($params['loadpath']));
+
 		# Shortcut for loadPath
 		if ($params['movenumber'] && is_numeric($params['movenumber']))
 			$params['loadpath'] = array(0, $params['movenumber']);

@@ -162,12 +162,12 @@
 	margin-bottom: 0;
 }
 
-.wp-eidogo .comments .right {
+.eidogo-player .comments .right {
 	color: #008000;
 	font-style: inherit;
 }
 
-.wp-eidogo .comments .wrong {
+.eidogo-player .comments .wrong {
 	color: #aa0000;
 	font-style: inherit;
 }
