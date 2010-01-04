@@ -108,6 +108,16 @@ THEMES = {
                 fill: white;
             }
 
+            .markerTB {
+                fill: black;
+            }
+
+            .markerTW {
+                fill: white;
+                stroke-width: 1px;
+                stroke: #7f7f7f;
+            }
+
             .markerSL {
                 fill: #ffffff;
                 fill-opacity: 0.5;
@@ -189,6 +199,13 @@ THEMES = {
                 <rect class="markerCurrent" x="-5.5" y="-5.5" width="11" height="11" />
             </symbol>
 
+            <symbol id="markerTB" viewBox="-15.5 -15.5 31 31">
+                <circle class="markerTB" r="5.5" />
+            </symbol>
+            <symbol id="markerTW" viewBox="-9.5 -9.5 19 19">
+                <circle class="markerTW" r="5" />
+            </symbol>
+
             <symbol id="markerSL" viewBox="0 0 1 1">
                 <rect class="markerSL" x="0" y="0" width="1" height="1" />
             </symbol>
@@ -260,11 +277,15 @@ THEMES = {
                 stroke: white;
             }
 
-            .None .markerCurrent, .W .markerCurrent {
+            .markerCurrent {
+                fill: #ff0000;
+            }
+
+            .markerTB {
                 fill: black;
             }
 
-            .B .markerCurrent {
+            .markerTW {
                 fill: white;
             }
 
@@ -359,6 +380,13 @@ THEMES = {
                 <rect class="markerCurrent" x="-3.5" y="-3.5" width="7" height="7" />
             </symbol>
 
+            <symbol id="markerTB" viewBox="-9.5 -9.5 19 19">
+                <circle class="markerTB" r="3.5" />
+            </symbol>
+            <symbol id="markerTW" viewBox="-9.5 -9.5 19 19">
+                <circle class="markerTW" r="3.5" />
+            </symbol>
+
             <symbol id="markerSL" viewBox="0 0 1 1">
                 <rect class="markerSL" x="0" y="0" width="1" height="1" />
             </symbol>
@@ -422,6 +450,14 @@ THEMES = {
 
             .markerCurrent {
                 fill: #ff0000;
+            }
+
+            .markerTB {
+                fill: black;
+            }
+
+            .markerTW {
+                fill: white;
             }
 
             .markerSL {
@@ -502,6 +538,13 @@ THEMES = {
                 <rect class="markerCurrent" x="-3.5" y="-3.5" width="7" height="7" />
             </symbol>
 
+            <symbol id="markerTB" viewBox="-9.5 -9.5 19 19">
+                <circle class="markerTB" r="3.5" />
+            </symbol>
+            <symbol id="markerTW" viewBox="-9.5 -9.5 19 19">
+                <circle class="markerTW" r="3.5" />
+            </symbol>
+
             <symbol id="markerSL" viewBox="0 0 1 1">
                 <rect class="markerSL" x="0" y="0" width="1" height="1" />
             </symbol>
@@ -517,7 +560,6 @@ THEMES = {
     }, # }}}
 
 }
-
 
 HOSHIS = { # {{{
     5: ((2, 2),),
@@ -642,7 +684,7 @@ def make_svg(board, options, theme):
     use_markers = ('CR', 'MA', 'SQ', 'TR')
     if options.current_move_marker != 'None':
         use_markers += ('B', 'W')
-    use_markers += ('DD', 'SL')
+    use_markers += ('TB', 'TW', 'DD', 'SL')
     for prop in use_markers:
         if prop not in board.current_node.data:
             continue

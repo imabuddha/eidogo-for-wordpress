@@ -188,6 +188,8 @@ class GoBoard(object):
                 for y in range(y1, y2+1):
                     for x in range(x1, x2+1):
                         ret.append((x, y))
+            elif item == '':
+                pass # a pass!
             else:
                 raise ValueError('Invalid point list (%s)' % repr(item))
         return ret
