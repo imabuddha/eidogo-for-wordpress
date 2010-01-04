@@ -331,8 +331,8 @@ def make_svg(board, options):
             crop_height += options.board_padding
 
     svg_vars = {
-        'width': crop_width,
-        'height': crop_height,
+        'width': round(crop_width),
+        'height': round(crop_height),
         'crop_left': crop_left,
         'crop_top': crop_top,
         'board': '\n'.join(board_tags),
@@ -342,6 +342,9 @@ def make_svg(board, options):
         'font_size': options.font_size,
         'line_width': options.line_width,
     }
+    if options.verbose:
+        sys.stderr.write('Dimensions: %dx%d\n' %
+                (round(crop_width), round(crop_height)))
     return (SVG_HEAD + SVG_DEFS + SVG_BODY + SVG_FOOT) % svg_vars
 
 def main():
@@ -378,6 +381,9 @@ def main():
             help="font size (default 12)", metavar='SIZE')
     parser.add_option('-F', '--font-family', default='Arial,Helvetica,sans-serif',
             help='font family (default Arial,Helvetica,sans-serif)', metavar='SIZE')
+
+    parser.add_option('-v', '--verbose', action='store_true',
+            help='print some verbose output (like image dimensions) to stderr')
 
     options, args = parser.parse_args()
 
@@ -433,13 +439,19 @@ def main():
     # Generate output
     if options.output_file in (None, '-'):
         outfh = sys.stdout
+        if options.verbose:
+            sys.stderr.write('Writing to stdout...\n')
     else:
         outfh = file(options.output_file, 'w')
+        if options.verbose:
+            sys.stderr.write('Writing "%s"...\n' % options.output_file)
     if options.diagram:
         outfh.write(str(board))
     else:
         outfh.write(make_svg(board, options))
     outfh.close()
+    if options.verbose:
+        sys.stderr.write('Done.\n')
 
 if __name__ == '__main__':
     main()
