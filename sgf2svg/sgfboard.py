@@ -85,7 +85,7 @@ class GoBoard(object):
             self._crop_point(x, y)
 
         if 'PL' in node.data:
-            self.to_play = note['PL'][0]
+            self.to_play = node['PL'][0]
 
     def _crop_point(self, x, y):
         if self.left_edge is None or x < self.left_edge:
