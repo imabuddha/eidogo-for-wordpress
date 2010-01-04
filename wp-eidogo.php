@@ -127,6 +127,7 @@ class WpEidoGoPlugin {
 	/* Initialization */
 	function WpEidoGoPlugin() { # {{{
 		$this->plugin_url = WP_PLUGIN_URL . '/eidogo-for-wordpress';
+		$this->plugin_dir = WP_PLUGIN_DIR . '/eidogo-for-wordpress';
 		$this->setup_hooks();
 	} # }}}
 
@@ -531,6 +532,133 @@ html;
 		return $attrs;
 	} # }}}
 
+	function embed_static($params, $sgf_data) { # {{{
+		global $wp_query;
+
+		if ($params['caption'])
+			$fallback = "\n\n[Embedded SGF File: ".htmlspecialchars($params['caption'])."]\n\n";
+		else
+			$fallback = "\n\n[Embedded SGF File]\n\n";
+
+		if ($wp_query && $wp_query->post && $wp_query->post->ID)
+			$uniq = $wp_query->post->ID;
+		else
+			$uniq = 'X';
+		$uniq .= '-' . md5(serialize($params) . serialize($sgf_data));
+
+		$svg_file = $this->plugin_dir . "/static/$uniq.svg";
+		$png_file = $this->plugin_dir . "/static/$uniq.png";
+		$png_url  = $this->plugin_url . "/static/$uniq.png";
+
+		# Figure out where we're really getting the SGF data from
+		$sgfurl = $params['sgfurl'];
+		if ($sgfurl) {
+			if (substr($sgfurl, 0, strlen(WP_CONTENT_URL)) == WP_CONTENT_URL) {
+				# absolute URL, but local
+				$sgf_file = WP_CONTENT_DIR . substr($sgfurl, strlen(WP_CONTENT_URL));
+			} elseif (preg_match('!https?://!', $sgfurl)) {
+				# remote
+				$sgf_file = '-';
+				$sgf_data = file_get_contents($sgfurl, 0, null, -1, 65536);
+			} elseif (substr($sgfurl, 0, 1) == '/') {
+				# relative URL, local
+				$sgf_file = ABSPATH . ltrim($sgfurl, '/');
+			} else {
+				# no idea
+				return $fallback;
+			}
+		} else {
+			# using sgf data
+			$sgf_file = '-';
+		}
+
+		# Avoid errors and possible nasties
+		if ($sgf_file != '-' && !is_readable($sgf_file))
+			return $fallback;
+
+		# Check to see if the cached version is OK
+		if (file_exists($png_file) && is_readable($png_file)) {
+			$ok_cache = True;
+
+			$file_check = array(
+				$this->plugin_dir . '/wp-eidogo.php',
+				$this->plugin_dir . '/sgf2svg/sgfboard.py',
+				$this->plugin_dir . '/sgf2svg/sgf2svg',
+				$svg_file,
+			);
+			if ($sgf_file != '-')
+				$file_check[] = $sgf_file;
+
+			$png_mtime = filemtime($png_file);
+			foreach ($file_check as $fc) {
+				if (!file_exists($fc) || !is_readable($fc) || $png_mtime < filemtime($fc)) {
+					$ok_cache = false;
+					break;
+				}
+			}
+
+			if ($ok_cache)
+				return $this->embed_image($params, $png_file, $png_url);
+		}
+
+		# Create sgf file command
+		$cmd = $this->plugin_dir . '/sgf2svg/sgf2svg -o ' . escapeshellarg($svg_file);
+		if ($params['theme'] == 'problem')
+			$cmd .= ' --crop-whole-tree';
+		if (isset($params['movenumber']))
+			$cmd .= ' --move-number=' . escapeshellarg($params['movenumber']);
+		elseif ($params['theme'] != 'problem')
+			$cmd .= ' --move-number=1000'; # for static images, jump to end of game by default
+		$cmd .= ' ' . escapeshellarg($sgf_file);
+
+		# Run the command
+		$dspec = array(
+			0 => array('pipe', 'r'),
+			1 => array('pipe', 'w'),
+			2 => array('pipe', 'w'),
+		);
+		$process = proc_open($cmd, $dspec, $pipes);
+		if (!$process)
+			return $fallback;
+		if ($sgf_file == '-')
+			fwrite($pipes[0], $sgf_data);
+		fclose($pipes[0]);
+		$stdout_result = stream_get_contents($pipes[1]);
+		$stderr_result = stream_get_contents($pipes[2]);
+		fclose($pipes[1]);
+		fclose($pipes[2]);
+
+		if (!file_exists($svg_file) || !is_readable($svg_file))
+			return $fallback;
+
+		$cmd = 'convert -quiet ' . escapeshellarg($svg_file) . ' ' . escapeshellarg($png_file);
+		@system($cmd);
+
+		if (!file_exists($png_file) || !is_readable($png_file))
+			return $fallback;
+
+		# cleanup old svg and png files that have not been accessed in a long time?
+		# or perhaps add and admin screen option to clear the cache
+
+		return $this->embed_image($params, $png_file, $png_url);
+
+	} # }}}
+
+	function embed_image($params, $filename, $url) { # {{{
+		$info = getimagesize($filename);
+		$tag = '<img src="'.$url.'" width="'.$info[0].'" height="'.$info[1].'" alt="SGF Diagram"' .
+			($params['caption'] ? '' : ' class="'.$params['class'].'"') . ' />';
+
+		if ($params['href'])
+			$tag = '<a href="'.htmlspecialchars($params['href']).'">'.$tag.'</a>';
+
+		if (!$params['caption'])
+			return $tag;
+
+		return "\n\n".'[caption id="" align="'.htmlspecialchars($params['class']).
+			'" width="'.$info[0].'" caption="'.htmlspecialchars($params['caption']).'"]'.$tag."[/caption]\n\n";
+	} # }}}
+
 	function prepare_sgf($matches, $theme='compact') { # {{{
 		list($whole_tag, $params, $sgf_data) = $matches;
 
@@ -675,11 +803,8 @@ javascript;
 			</div>
 html;
 
-		if (is_feed())
-			if ($params['caption'])
-				return "\n\n[Embedded SGF File: ".htmlspecialchars($params['caption'])."]\n\n";
-			else
-				return "\n\n[Embedded SGF File]\n\n";
+		if (is_feed() || $params['image'])
+			return $this->embed_static($params, $sgf_data);
 		else
 			return "\n\n[sgfPrepared id=\"".($this->sgf_count++)."\"]\n\n";
 

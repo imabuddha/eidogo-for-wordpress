@@ -74,6 +74,13 @@ It's possible that EidoGo won't correctly determine which color should be
 automatically played (it tries to look for a `PL[]` entry in the SGF file),
 but you can override it by specifing, e.g. `[sgf problemColor="B"]` explicitly.
 
+= Can I embed as a static diagram image? =
+
+Yep, add the parameter `image="true"`. This is also what gets inserted in RSS
+feeds since EidoGo obviously won't work there. Note: imagemagick needs to be
+installed on the server and in the path for this to work. If the plugin can't
+find imagemagick, it will insert static text instead.
+
 = What other parameters are there? =
 
 You can specify a caption for the EidoGo instance with `caption="Caption"`.
@@ -191,7 +198,10 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 * Changed `embed_attachment()` to not work by invoking filters, which had
   weird side effects like getting sociable stuck inside the problem widget
 * Somewhat improved SGF parser and storing additional SGF metadata
-* Somewhat more useful output in RSS feed
+* Putting static images in RSS feed instead of trying to embed javascript
+* Adding new sgf2svg script to generate static diagrams
+* Added option to embed static images instead of EidoGo instances (imagemagick
+  required for this feature!)
 
 = 0.8.4 =
 * Using latest EidoGo from github instead of 1.2 release
