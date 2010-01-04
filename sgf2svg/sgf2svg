@@ -4,10 +4,10 @@ import sgflib, sgfboard, optparse, sys, math
 
 # SVG Templates {{{
 # Various precalc
-r = 3.0
+r = 3.5
 rp = r/math.cos(math.radians(60))
 x = r*math.tan(math.radians(60))
-points = "%s,%s %s,%s %s,%s" % (0,1.5-rp, x,r+1.5, -x,r+1.5)
+points = "%s,%s %s,%s %s,%s" % (0,-rp, x,r, -x,r)
 arrowhead_fix = 3
 #
 SVG_HEAD = '''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -50,9 +50,16 @@ SVG_DEFS = '''
 
     .markerCR, .markerMA, .markerSQ, .markerTR {
         stroke-width: 2.0;
-        stroke-linecap: square;
         stroke: #ff0000;
         fill-opacity: 0.0;
+    }
+
+    .markerMA {
+        stroke-linecap: square;
+    }
+
+    .markerTR {
+        stroke-linejoin: bevel;
     }
 
     .markerCurrent {
@@ -72,9 +79,10 @@ SVG_DEFS = '''
     .markerLB {
         font-family: %(font_family)s;
         font-size: %(font_size)spx;
-        text-anchor: middle;
-        fill: #ff0000;
         font-weight: bold;
+        text-anchor: middle;
+        letter-spacing: -1;
+        fill: #ff0000;
     }
 
     .markerLN, .markerAR {
@@ -279,8 +287,11 @@ def make_svg(board, options):
             x, y = board.convert_points([points])[0]
             xp, yp = ( options.board_padding + (p+0.5)*options.stone_size for p in (x, y) )
             yp += options.font_size/2.5
-            marker_tags.append(svg_tag('text', attr_escape(label), _class='markerLB', x=xp, y=yp,
-                width=options.stone_size, height=options.stone_size))
+            cls = 'markerLB' + ' ' + str(board.cur_stones[x][y])
+            #cram = max(min((7.0-len(label))/6.0, 1.0), 0.5)
+            marker_tags.append(svg_tag('text', attr_escape(label), _class=cls,
+                x=xp, y=yp, width=options.stone_size, height=options.stone_size))
+                #transform="translate(%s) scale(%s,1)" % (xp, cram)))
 
     # Markers
     for prop in ('CR', 'MA', 'SQ', 'TR', 'B', 'W', 'DD', 'SL'):
@@ -289,7 +300,8 @@ def make_svg(board, options):
         points = board.convert_points(board.current_node[prop])
         for x, y in points:
             xp, yp = ( options.board_padding + p*options.stone_size for p in (x, y) )
-            marker_tags.append(svg_tag('use', xlink_Chref='#marker'+prop,
+            cls = 'marker' + prop + ' ' + str(board.cur_stones[x][y])
+            marker_tags.append(svg_tag('use', xlink_Chref='#marker'+prop, _class=cls,
                 x=xp, y=yp, width=options.stone_size, height=options.stone_size))
     # TODO: The handling for DD is bugged. It uses only the current node's DD
     # entries (EidoGo does the same.) DD is supposed to be inherited though
