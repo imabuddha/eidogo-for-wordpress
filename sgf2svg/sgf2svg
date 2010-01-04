@@ -185,10 +185,7 @@ THEMES = {
             <symbol id="markerTR" viewBox="-15.5 -15.5 31 31">
                 <polygon class="markerTR" points="''' + triangle_points(5.5) + '''" />
             </symbol>
-            <symbol id="markerB" viewBox="-15.5 -15.5 31 31">
-                <rect class="markerCurrent" x="-5.5" y="-5.5" width="11" height="11" />
-            </symbol>
-            <symbol id="markerW" viewBox="-15.5 -15.5 31 31">
+            <symbol id="markerCurrent" viewBox="-15.5 -15.5 31 31">
                 <rect class="markerCurrent" x="-5.5" y="-5.5" width="11" height="11" />
             </symbol>
 
@@ -358,10 +355,7 @@ THEMES = {
             <symbol id="markerTR" viewBox="-9.5 -9.5 19 19">
                 <polygon class="markerTR" points="''' + triangle_points(3) + '''" />
             </symbol>
-            <symbol id="markerB" viewBox="-9.5 -9.5 19 19">
-                <rect class="markerCurrent" x="-3.5" y="-3.5" width="7" height="7" />
-            </symbol>
-            <symbol id="markerW" viewBox="-9.5 -9.5 19 19">
+            <symbol id="markerCurrent" viewBox="-9.5 -9.5 19 19">
                 <rect class="markerCurrent" x="-3.5" y="-3.5" width="7" height="7" />
             </symbol>
 
@@ -504,10 +498,7 @@ THEMES = {
             <symbol id="markerTR" viewBox="-9.5 -9.5 19 19">
                 <polygon class="markerTR" points="''' + triangle_points(3.5) + '''" />
             </symbol>
-            <symbol id="markerB" viewBox="-9.5 -9.5 19 19">
-                <rect class="markerCurrent" x="-3.5" y="-3.5" width="7" height="7" />
-            </symbol>
-            <symbol id="markerW" viewBox="-9.5 -9.5 19 19">
+            <symbol id="markerCurrent" viewBox="-9.5 -9.5 19 19">
                 <rect class="markerCurrent" x="-3.5" y="-3.5" width="7" height="7" />
             </symbol>
 
@@ -648,10 +639,16 @@ def make_svg(board, options, theme):
                 #transform="translate(%s) scale(%s,1)" % (xp, cram)))
 
     # Markers
-    for prop in ('CR', 'MA', 'SQ', 'TR', 'B', 'W', 'DD', 'SL'):
+    use_markers = ('CR', 'MA', 'SQ', 'TR')
+    if options.current_move_marker != 'None':
+        use_markers += ('B', 'W')
+    use_markers += ('DD', 'SL')
+    for prop in use_markers:
         if prop not in board.current_node.data:
             continue
         points = board.convert_points(board.current_node[prop])
+        if prop in ('W', 'B'):
+            prop = options.current_move_marker
         for x, y in points:
             xp, yp = ( options.board_padding + p*options.stone_size for p in (x, y) )
             cls = 'marker' + prop + ' ' 'marker' + prop + '_' + str(board.cur_stones[x][y])
@@ -737,6 +734,9 @@ def main():
             help="font size (default 12)", metavar='SIZE')
     parser.add_option('-F', '--font-family',
             help='font family (default Arial,Helvetica,sans-serif)', metavar='SIZE')
+    parser.add_option('-M', '--current-move-marker', default='Current',
+            type="choice", choices=('Current', 'None', 'CR', 'MA', 'SQ', 'TR'),
+            help='how to mark the current move (options: Current, None, CR, MA, SQ, TR)', metavar='MARKER')
 
     parser.add_option('-v', '--verbose', action='store_true',
             help='print some verbose output (like image dimensions) to stderr')
