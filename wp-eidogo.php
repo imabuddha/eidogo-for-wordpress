@@ -3,7 +3,7 @@
 Plugin Name: EidoGo for WordPress
 Plugin URI: http://www.fortmyersgo.org/eidogo-for-wordpress/
 Description: EidoGo for WordPress makes it easy to embed SGF files in your WordPress-powered blog with the EidoGo SGF viewer and editor.
-Version: 0.8.5
+Version: 0.8.6
 Author: Thomas Schumm
 Author URI: http://www.fortmyersgo.org/
 */
@@ -647,7 +647,7 @@ html;
 	function embed_image($params, $filename, $url) { # {{{
 		$info = getimagesize($filename);
 		$tag = '<img src="'.$url.'" width="'.$info[0].'" height="'.$info[1].'" alt="SGF Diagram"' .
-			($params['caption'] ? '' : ' class="'.$params['class'].'"') . ' />';
+			($params['caption'] ? '' : ' class="'.htmlspecialchars($params['class']).'"') . ' />';
 
 		if ($params['href'])
 			$tag = '<a href="'.htmlspecialchars($params['href']).'">'.$tag.'</a>';
@@ -656,7 +656,7 @@ html;
 			return $tag;
 
 		return "\n\n".'[caption id="" align="'.htmlspecialchars($params['class']).
-			'" width="'.$info[0].'" caption="'.htmlspecialchars($params['caption']).'"]'.$tag."[/caption]\n\n";
+			'" width="'.$info[0].'" caption="('.htmlspecialchars($params['caption']).')"]'.$tag."[/caption]\n\n";
 	} # }}}
 
 	function prepare_sgf($matches, $theme='compact') { # {{{

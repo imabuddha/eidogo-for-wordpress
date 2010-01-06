@@ -5,9 +5,22 @@
 	background-image: url(images/board-19.png);
 }
 
+#sidebar .eidogo-player.theme-problem .board.size13 {
+    width: 175px !important;
+    height: 175px !important;
+    background-image: url(images/eidogo-tiny/board-13.png);
+}
+
+#sidebar .eidogo-player.theme-problem .board.size9 {
+    width: 123px !important;
+    height: 123px !important;
+    background-image: url(images/eidogo-tiny/board-9.png);
+}
+
 #sidebar .eidogo-player.theme-problem .board .point {
 	width: 13px !important;
 	height: 13px !important;
+	overflow: hidden; /* for IE6 */
 }
 
 #sidebar .eidogo-player.theme-problem .board .point.stone.white {

@@ -3,7 +3,7 @@ Contributors: fwiffo
 Donate link: href="http://www.amazon.com/gp/redirect.html?ie=UTF8&location=http%3A%2F%2Fwww.amazon.com%2Fgp%2Fregistry%2Fwishlist%2F3ETA9NVNRTZ4P&tag=fomygocl-20&linkCode=ur2&camp=1789&creative=390957
 Tags: widget, go, weiqi, baduk, sgf, EidoGo
 Requires at least: 2.8
-Tested up to: 2.9
+Tested up to: 2.9.1
 Stable tag: 0.8.4
 
 EidoGo for WordPress makes it easy to embed SGF files in your WordPress-powered
@@ -15,7 +15,8 @@ EidoGo for WordPress makes it easy to embed SGF files in your
 WordPress-powered blog with the [EidoGo SGF viewer and
 editor](http://eidogo.com/). If you write a blog about go (baduk, wéiqí, 碁,
 etc.) this plugin will let you easily post go diagrams, game records,
-problems, joseki dictionaries, etc.
+problems, joseki dictionaries, etc. PHP 5 is required. Imagemagick is
+recommended but not required.
 
 == Installation ==
 
@@ -72,7 +73,8 @@ is correct or incorrect, otherwise EidoGo gives no indication.
 
 It's possible that EidoGo won't correctly determine which color should be
 automatically played (it tries to look for a `PL[]` entry in the SGF file),
-but you can override it by specifing, e.g. `[sgf problemColor="B"]` explicitly.
+but you can override it by specifing, e.g. `[sgf problemColor="B"]`
+explicitly.
 
 = Can I embed as a static diagram image? =
 
@@ -119,12 +121,24 @@ images, but you may want to add a few lines to your theme's stylesheet to
 match things like margins with the rest of your layout or to change how
 instances are laid out by default when no alignment has been specified.
 
+= What other stuff can you do? =
+
+Try adding the random problem widget to your sidebar. It'll pull a random
+problem from any of the uploaded SGF problem files. Note: it only chooses from
+those in your media library (attachements). It won't include those embedded
+inline.
+
+I'll be adding a feature shortly that lets you create a page with an index of
+problems and an index of games (again, those uploaded as attachments, not
+those embedded inline).
+
 = How did you get the really compact layout with tiny stones in that screenshot of the random problem widget? =
 
 You can do a lot with EidoGo and stylesheets. I've included an example
 stylesheet and the images I used in a the `tiny-theme` directory. The exact
 details of the stylesheet will depend on your theme, but the example should
-have the information you need to get you started.
+have the information you need to get you started. In many cases, just
+appending the stylesheet to your theme's style.css will do the job.
 
 = Can I make SGF files show up nicely on the attachment page? =
 
@@ -193,6 +207,9 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 5. Administration for random problem widget
 
 == Changelog ==
+
+= 0.8.6 =
+* Style tweaks including styles for 9x9 and 13x13 boards in tiny mode
 
 = 0.8.5 =
 * Changed `embed_attachment()` to not work by invoking filters, which had
@@ -263,12 +280,13 @@ Some stuff I plan to do in the future:
   server, etc.
 * Expose more of EidoGo's options to the embed tag syntax
 * More browser testing
-* Error checking for old versions of PHP or Wordpress
 * Allow on-server editing of uploaded SGF files from admin screen with EidoGo
   (it'll be cool!)
 * Pull information from SGF file to set the default title and summary
   information on upload
 * Store additional metadata about uploaded SGF files
+* Problem and game indexes
+* More options in random problem widget
 
 == Legal ==
 

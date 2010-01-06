@@ -150,6 +150,15 @@
 	text-align: right;
 }
 
+/* Fix for options in compact theme */
+.eidogo-player.theme-compact .options {
+	width: 421px;
+}
+
+.eidogo-player.theme-compact .options a {
+	width: 207px;
+}
+
 /* For problem mode, make sure three lines are exactly visible for neatness */
 .wp-eidogo-problem .comments {
 	height: auto !important;
