@@ -320,18 +320,26 @@ THEMES = {
                 stroke-width: 3;
             }
 
-            .markerLB_B_bg, .markerLB_W_bg {
-                display: none;
+            .markerLB_B_bg {
+                fill: black;
+                stroke: black;
+                stroke-width: 1;
+            }
+
+            .markerLB_W_bg {
+                fill: white;
+                stroke: white;
+                stroke-width: 1;
             }
 
             .markerLN, .markerAR {
-                stroke: #0000aa;
+                stroke: #0066bb;
                 stroke-width: %(line_width)s;
                 stroke-linecap: round;
             }
 
             #arrHead {
-                fill: #0000aa;
+                fill: #0066bb;
             }
 
             .markerAR {
