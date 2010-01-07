@@ -173,6 +173,16 @@ class WpEidoGoPlugin {
 
 	/* HTML header */
 	function eidogo_head_tags() { # {{{
+		$ie6_warning = json_encode('<p class="ie6warning">' .  __(
+			'Internet Explorer 6 is not currently supported by the EidoGo for
+			WordPress plugin. Consider downloading one of the following:<br />
+			<a href="http://www.microsoft.com/windows/internet-explorer/default.aspx">Internet Explorer 8</a><br />
+			<a href="http://www.getfirefox.com/">Mozilla Firefox</a><br />
+			<a href="http://www.google.com/chrome">Google Chrome</a><br />
+			<a href="http://www.opera.com/">Opera</a>
+			') .
+			'</p>');
+
 		echo <<<html
 		<link rel="stylesheet" media="all" type="text/css" href="{$this->plugin_url}/wp-eidogo.css" />
 		<link rel="stylesheet" media="all" type="text/css" href="{$this->plugin_url}/eidogo/player/css/player.css" />
@@ -181,7 +191,7 @@ class WpEidoGoPlugin {
 		</script>
 		<!--[if lt IE 7]>
 		<script type="text/javascript">
-			broken_browser = true;
+			broken_browser = {$ie6_warning};
 		</script>
 		<![endif]-->
 		<script type="text/javascript" src="{$this->plugin_url}/eidogo/player/js/all.compressed.js"></script>
@@ -783,18 +793,12 @@ javascript;
 		if ($params['class'])
 			$class .= ' ' . $params['class'];
 
-		$ie6_warning = json_encode('<p class="ie6warning">' .  __(
-			'Internet Explorer 6 is not currently supported by the EidoGo for
-			WordPress plugin. Please, <a href="http://www.getfirefox.com/">get a
-			real web browser</a>.') .
-			'</p>');
-
 		$this->sgf_prepared_markup[$this->sgf_count] = <<<html
 			<div class="{$class}">
 			<div class="player-container" id="player-container-{$this->sgf_count}"></div>
 			<script type="text/javascript"><!--
 				if (broken_browser) {
-					document.getElementById('player-container-{$this->sgf_count}').innerHTML = {$ie6_warning};
+					document.getElementById('player-container-{$this->sgf_count}').innerHTML = broken_browser;
 				} else {
 					$player_js
 				}
