@@ -30,7 +30,7 @@ class WpEidoGoRandomProblemWidget extends WP_Widget {
 	function WpEidoGoRandomProblemWidget() { # {{{
 		$widget_ops = array(
 			'classname' => 'widget-random-go-problem',
-			'description' => __('Show a random go problem from your media library'),
+			'description' => __('A random go problem from your media library'),
 		);
 		$this->WP_Widget('random_go_problem', __('Random Go Problem'), $widget_ops);
 	} # }}}
@@ -123,7 +123,7 @@ class WpEidoGoProblemBrowser extends WP_Widget {
 	function WpEidoGoProblemBrowser() { # {{{
 		$widget_ops = array(
 			'classname' => 'widget-go-problem-browser',
-			'description' => __('Show tag clouds for problem category and difficulty'),
+			'description' => __('Browse go problems by category and difficulty'),
 		);
 		$this->WP_Widget('go_problem_browser', __('Go Problem Browser'), $widget_ops);
 	} # }}}
@@ -148,6 +148,60 @@ class WpEidoGoProblemBrowser extends WP_Widget {
 			'<h3>' . $wp_taxonomies['problem_category']->label . '</h3>' .
 			wp_tag_cloud(array(
 				'taxonomy' => 'problem_category',
+				'format' => 'list',
+				'echo' => false,
+				'unit' => '%',
+				'smallest' => 100,
+				'largest' => 100,
+				));
+
+		echo $before_widget . $before_title . $title . $after_title . $clouds . $after_widget;
+
+	} # }}}
+
+	function update($new_instance, $old_instance) { # {{{
+		$instance = $old_instance;
+		$instance['title'] = $new_instance['title'];
+
+		return $instance;
+	} # }}}
+
+	function form($instance) { # {{{
+		$title = attribute_escape($instance['title']);
+
+		$title_id = $this->get_field_id('title');
+		$title_name = $this->get_field_name('title');
+		$title_label = __('Title:');
+
+		echo <<<html
+			<p><label for="{$title_id}">{$title_label}
+				<input id="{$title_id}" name="{$title_name}" value="{$title}" class="widefat" /></label></p>
+html;
+	} # }}}
+
+}
+
+class WpEidoGoGameBrowser extends WP_Widget {
+
+	function WpEidoGoGameBrowser() { # {{{
+		$widget_ops = array(
+			'classname' => 'widget-go-game-browser',
+			'description' => __('Browse go games by category'),
+		);
+		$this->WP_Widget('go_game_browser', __('Go Game Browser'), $widget_ops);
+	} # }}}
+
+	function widget($args, $instance) { # {{{
+		$title = apply_filters('widget_title',
+			(empty($instance['title']) ? __('Go Game Browser') : $instance['title']));
+		global $wp_taxonomies;
+
+		extract($args);
+
+		$clouds =
+			'<h3>' . $wp_taxonomies['game_category']->label . '</h3>' .
+			wp_tag_cloud(array(
+				'taxonomy' => 'game_category',
 				'format' => 'list',
 				'echo' => false,
 				'unit' => '%',
@@ -254,6 +308,7 @@ class WpEidoGoPlugin {
 		# Register widgets
 		register_widget('WpEidoGoRandomProblemWidget');
 		register_widget('WpEidoGoProblemBrowser');
+		register_widget('WpEidoGoGameBrowser');
 	} # }}}
 
 	function register_taxonomies() { # {{{
