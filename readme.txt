@@ -210,6 +210,8 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 
 = 0.8.6 =
 * Style tweaks including styles for 9x9 and 13x13 boards in tiny mode
+* Added Problem Category, Problem Difficulty and Game Category using
+  wordpress taxonomies
 
 = 0.8.5 =
 * Changed `embed_attachment()` to not work by invoking filters, which had

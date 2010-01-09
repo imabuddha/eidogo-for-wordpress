@@ -118,6 +118,69 @@ html;
 
 }
 
+class WpEidoGoProblemBrowser extends WP_Widget {
+
+	function WpEidoGoProblemBrowser() { # {{{
+		$widget_ops = array(
+			'classname' => 'widget-go-problem-browser',
+			'description' => __('Show tag clouds for problem category and difficulty'),
+		);
+		$this->WP_Widget('go_problem_browser', __('Go Problem Browser'), $widget_ops);
+	} # }}}
+
+	function widget($args, $instance) { # {{{
+		$title = apply_filters('widget_title',
+			(empty($instance['title']) ? __('Go Problem Browser') : $instance['title']));
+		global $wp_taxonomies;
+
+		extract($args);
+
+		$clouds =
+			'<h3>' . $wp_taxonomies['problem_difficulty']->label . '</h3>' .
+			wp_tag_cloud(array(
+				'taxonomy' => 'problem_difficulty',
+				'format' => 'list',
+				'echo' => false,
+				'unit' => '%',
+				'smallest' => 100,
+				'largest' => 100,
+				)) .
+			'<h3>' . $wp_taxonomies['problem_category']->label . '</h3>' .
+			wp_tag_cloud(array(
+				'taxonomy' => 'problem_category',
+				'format' => 'list',
+				'echo' => false,
+				'unit' => '%',
+				'smallest' => 100,
+				'largest' => 100,
+				));
+
+		echo $before_widget . $before_title . $title . $after_title . $clouds . $after_widget;
+
+	} # }}}
+
+	function update($new_instance, $old_instance) { # {{{
+		$instance = $old_instance;
+		$instance['title'] = $new_instance['title'];
+
+		return $instance;
+	} # }}}
+
+	function form($instance) { # {{{
+		$title = attribute_escape($instance['title']);
+
+		$title_id = $this->get_field_id('title');
+		$title_name = $this->get_field_name('title');
+		$title_label = __('Title:');
+
+		echo <<<html
+			<p><label for="{$title_id}">{$title_label}
+				<input id="{$title_id}" name="{$title_name}" value="{$title}" class="widefat" /></label></p>
+html;
+	} # }}}
+
+}
+
 class WpEidoGoPlugin {
 
 	var $sgf_count = 0;
@@ -165,10 +228,60 @@ class WpEidoGoPlugin {
 
 		# For the random problem widget
 		add_action('widgets_init', array(&$this, 'register_widgets'));
+
+		# For admin menu options
+		add_action('admin_menu', array(&$this, 'add_admin_menu_options'));
+
+		# When the plugin is activated
+		register_activation_hook(__FILE__, array(&$this, 'activate_plugin'));
+
+	} # }}}
+
+	function add_admin_menu_options() { # {{{
+		add_submenu_page('upload.php', 'Game Categories', 'Game Categories', 'manage_categories',
+			'edit-tags.php?taxonomy=game_category');
+		add_submenu_page('upload.php', 'Problem Categories', 'Problem Categories', 'manage_categories',
+			'edit-tags.php?taxonomy=problem_category');
+		add_submenu_page('upload.php', 'Problem Difficulties', 'Problem Difficulties', 'manage_categories',
+			'edit-tags.php?taxonomy=problem_difficulty');
 	} # }}}
 
 	function register_widgets() { # {{{
+		# Weirdly, I seem to have to call this here...
+		# TODO: Move this because it's stupid here
+		$this->register_taxonomies();
+
+		# Register widgets
 		register_widget('WpEidoGoRandomProblemWidget');
+		register_widget('WpEidoGoProblemBrowser');
+	} # }}}
+
+	function register_taxonomies() { # {{{
+		# taxonomies for problems and games
+		register_taxonomy('problem_category', array('attachment'), array(
+			'hierarchical' => false,
+			'label' => __('Problem Category'),
+			'query_var' => 'problem_category',
+			'rewrite' => array('slug' => 'problem-category'),
+			));
+		register_taxonomy('problem_difficulty', array('attachment'), array(
+			'hierarchical' => false,
+			'label' => __('Problem Difficulty'),
+			'query_var' => 'problem_difficulty',
+			'rewrite' => array('slug' => 'problem-difficulty'),
+			));
+		register_taxonomy('game_category', array('attachment'), array(
+			'hierarchical' => false,
+			'label' => __('Game Category'),
+			'query_var' => 'game_category',
+			'rewrite' => array('slug' => 'game-category'),
+			));
+	} # }}}
+
+	function activate_plugin() { # {{{
+		$this->register_taxonomies();
+		global $wp_rewrite;
+		$wp_rewrite->flush_rules();
 	} # }}}
 
 	/* HTML header */
@@ -223,11 +336,12 @@ html;
 		return join("\n", $elements);
 	} # }}}
 
-	function sgf_media_form($form_fields, $post=null) { # {{{
+	function sgf_media_form($default_fields, $post=null) { # {{{
 		if ($post->post_mime_type != $this->sgf_mime_type)
-			return $form_fields;
+			return $default_fields;
 
-		$form_fields['align'] = array(
+		$my_fields = array();
+		$my_fields['align'] = array(
 			'label' => __('Alignment'),
 			'input' => 'html',
 			'html'  => image_align_input_fields($post, get_option('image_default_align')),
@@ -239,14 +353,14 @@ html;
 		if (!$meta['_wpeidogo_problem_color']) $meta['_wpeidogo_problem_color'] = array('auto');
 
 		$themes = array('compact' => 'Compact', 'full' => 'Full', 'problem' => 'Problem');
-		$form_fields['eidogo_theme'] = array(
+		$my_fields['eidogo_theme'] = array(
 			'label' => __('Theme'),
 			'input' => 'html',
 			'html' => $this->simple_radio('eidogo_theme', $themes, $post->ID, $meta['_wpeidogo_theme'][0], true),
 		);
 
 		$methods = array('iframe' => 'Iframe', 'inline' => 'Inline');
-		$form_fields['embed_method'] = array(
+		$my_fields['embed_method'] = array(
 			'label' => __('Embed Method'),
 			'input' => 'html',
 			'html' => $this->simple_radio('embed_method', $methods, $post->ID, $meta['_wpeidogo_embed_method'][0]),
@@ -264,12 +378,25 @@ html;
 		$formscript = "<script type='text/javascript'>wpeidogo_theme_change({$post->ID});</script>";
 
 		$colors = array('auto' => 'Auto', 'B' => 'Black', 'W' => 'White');
-		$form_fields['problem_color'] = array(
+		$my_fields['problem_color'] = array(
 			'label' => __('Problem Color'),
 			'input' => 'html',
-			'html' => $this->simple_radio('problem_color', $colors, $post->ID, $meta['_wpeidogo_problem_color'][0]) .
-				$fmime . $furl . $formscript,
+			'html' => $this->simple_radio('problem_color', $colors, $post->ID,
+				$meta['_wpeidogo_problem_color'][0]),
 		);
+
+		$form_fields = array();
+		foreach ($default_fields as $key => $val) {
+			if ($key == 'problem_category')
+				$form_fields = array_merge($form_fields, $my_fields);
+			$form_fields[$key] = $val;
+		}
+
+		$form_fields['wpeidogo_meta'] = array(
+			'label' => 'Meta',
+			'input' => 'html',
+			'html' => $fmime . $furl . $formscript
+			);
 
 		return $form_fields;
 	} # }}}

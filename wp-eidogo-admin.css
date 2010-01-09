@@ -13,6 +13,17 @@ tr.problem_color td.field label {
 	display: inline !important;
 }
 
+tr.problem_category label {
+	word-spacing: -1px;
+}
+
+tr.wpeidogo_meta,
+tr.problem_category,
+tr.problem_difficulty,
+tr.game_category {
+	display: none;
+}
+
 /* Work around an apparent bug in the WordPress styles */
 input[type="radio"] {
 	border: 0 !important;
