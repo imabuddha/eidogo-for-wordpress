@@ -287,12 +287,11 @@ Some stuff I plan to do in the future:
 * Pull information from SGF file to set the default title and summary
   information on upload
 * Store additional metadata about uploaded SGF files
-* Problem and game indexes
 * More options in random problem widget
 
 == Legal ==
 
-Copyright &copy; 2009 Thomas Schumm
+Copyright &copy; 2009-2010 Thomas Schumm
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License as published by the Free

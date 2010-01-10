@@ -8,7 +8,7 @@ Author: Thomas Schumm
 Author URI: http://www.fortmyersgo.org/
 */
 
-/*	Copyright © 2009 Thomas Schumm <phong@phong.org>
+/*	Copyright © 2009-2010 Thomas Schumm <phong@phong.org>
 
 	This program is free software: you can redistribute it and/or modify it
 	under the terms of the GNU Affero General Public License as published by
@@ -25,7 +25,7 @@ Author URI: http://www.fortmyersgo.org/
 
 */
 
-class WpEidoGoRandomProblemWidget extends WP_Widget {
+class WpEidoGoRandomProblemWidget extends WP_Widget { # {{{
 
 	function WpEidoGoRandomProblemWidget() { # {{{
 		$widget_ops = array(
@@ -116,9 +116,9 @@ class WpEidoGoRandomProblemWidget extends WP_Widget {
 html;
 	} # }}}
 
-}
+} # }}}
 
-class WpEidoGoProblemBrowser extends WP_Widget {
+class WpEidoGoProblemBrowser extends WP_Widget { # {{{
 
 	function WpEidoGoProblemBrowser() { # {{{
 		$widget_ops = array(
@@ -144,6 +144,7 @@ class WpEidoGoProblemBrowser extends WP_Widget {
 				'unit' => '%',
 				'smallest' => 100,
 				'largest' => 100,
+				'fix_counts' => true,
 				)) .
 			'<h3>' . $wp_taxonomies['problem_category']->label . '</h3>' .
 			wp_tag_cloud(array(
@@ -153,6 +154,7 @@ class WpEidoGoProblemBrowser extends WP_Widget {
 				'unit' => '%',
 				'smallest' => 100,
 				'largest' => 100,
+				'fix_counts' => true,
 				));
 
 		echo $before_widget . $before_title . $title . $after_title . $clouds . $after_widget;
@@ -179,9 +181,9 @@ class WpEidoGoProblemBrowser extends WP_Widget {
 html;
 	} # }}}
 
-}
+} # }}}
 
-class WpEidoGoGameBrowser extends WP_Widget {
+class WpEidoGoGameBrowser extends WP_Widget { # {{{
 
 	function WpEidoGoGameBrowser() { # {{{
 		$widget_ops = array(
@@ -207,6 +209,7 @@ class WpEidoGoGameBrowser extends WP_Widget {
 				'unit' => '%',
 				'smallest' => 100,
 				'largest' => 100,
+				'fix_counts' => true,
 				));
 
 		echo $before_widget . $before_title . $title . $after_title . $clouds . $after_widget;
@@ -233,7 +236,7 @@ class WpEidoGoGameBrowser extends WP_Widget {
 html;
 	} # }}}
 
-}
+} # }}}
 
 class WpEidoGoPlugin {
 
@@ -280,8 +283,9 @@ class WpEidoGoPlugin {
 		add_filter('media_send_to_editor', array(&$this, 'sgf_send_to_editor'), 10, 3);
 		add_filter('attachment_fields_to_save', array(&$this, 'save_sgf_info'), 10, 3);
 
-		# For the random problem widget
+		# For the random problem and problem and game browser widgets
 		add_action('widgets_init', array(&$this, 'register_widgets'));
+		add_filter('get_terms', array(&$this, 'fix_term_count'), 10, 3);
 
 		# For admin menu options
 		add_action('admin_menu', array(&$this, 'add_admin_menu_options'));
@@ -289,6 +293,65 @@ class WpEidoGoPlugin {
 		# When the plugin is activated
 		register_activation_hook(__FILE__, array(&$this, 'activate_plugin'));
 
+	} # }}}
+
+	function fix_term_count($terms, $taxonomies, $args) { # {{{
+		# Currently, when get_terms is used with a custom taxonomy, it returns
+		# a count value that includes unpublished content. So wp_tag_cloud will
+		# produce unexpected results. The tooltip will show the count including
+		# unpublished content, but the page it links to will only show published
+		# items. If a term is only attached to unpublished content, then it'll
+		# be a 404, which is even worse. So this filter does its own query to
+		# get an accurate count and filters things accordingly.
+
+		# This may be unnecessary in a future WordPress version.
+
+		if (!$args['fix_counts'])
+			return $terms;
+
+		global $wpdb;
+
+		$term_ids = array();
+		foreach ($terms as $term)
+			$term_ids[] = $term->term_id;
+
+		$posts_where = "AND $wpdb->posts.post_type != 'revision' AND (($wpdb->posts.post_status = 'publish') OR ($wpdb->posts.post_status = 'inherit' AND (p2.post_status = 'publish')))";
+		$posts_where = apply_filters('posts_where', $posts_where);
+
+		$query = "
+			SELECT COUNT(1) as count, t.term_id
+				FROM $wpdb->terms AS t
+				INNER JOIN $wpdb->term_taxonomy AS tt ON t.term_id = tt.term_id
+				INNER JOIN $wpdb->term_relationships AS tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
+				INNER JOIN $wpdb->posts ON $wpdb->posts.ID = tr.object_id
+				LEFT JOIN $wpdb->posts AS p2 on $wpdb->posts.post_parent = p2.ID
+				WHERE t.term_id IN (".join(', ', $term_ids).")
+					$posts_where
+				GROUP BY t.name, t.term_id, tt.parent
+				";
+
+		$counts = $wpdb->get_results($query);
+		$_terms = array();
+		$_counts = array();
+		foreach ($counts as $c)
+			$_counts[$c->term_id] = $c->count;
+
+		foreach ($terms as $t) {
+			if (!$_counts[$t->term_id]) {
+				if ($args['hide_empty'])
+					continue;
+				$t->count = 0;
+			} else {
+				$t->count = $_counts[$t->term_id];
+			}
+			$_terms[] = $t;
+		}
+
+		# TODO: Worry about hierarchy and padding parent counts or just be
+		# satisifed knowing that I didn't set up any of my taxonomies as
+		# hierarchical?
+
+		return $_terms;
 	} # }}}
 
 	function add_admin_menu_options() { # {{{
@@ -337,6 +400,7 @@ class WpEidoGoPlugin {
 		$this->register_taxonomies();
 		global $wp_rewrite;
 		$wp_rewrite->flush_rules();
+		# TODO: refresh metadata for SGF attachments
 	} # }}}
 
 	/* HTML header */
@@ -526,7 +590,7 @@ html;
 		$matches = array();
 
 		# These are all game-info or root type nodes, and none are list types.
-		# The parsing method will have to be rewritten if list types are 
+		# The parsing method will have to be rewritten if list types are
 		# admitted here.
 		# NOTE: This only really handles one occurance of each of these node
 		# types and therefore may not work that well on game collections
