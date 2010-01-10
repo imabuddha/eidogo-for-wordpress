@@ -4,7 +4,7 @@ Donate link: href="http://www.amazon.com/gp/redirect.html?ie=UTF8&location=http%
 Tags: widget, go, weiqi, baduk, sgf, EidoGo
 Requires at least: 2.8
 Tested up to: 2.9.1
-Stable tag: 0.8.5
+Stable tag: 0.8.6
 
 EidoGo for WordPress makes it easy to embed SGF files in your WordPress-powered
 blog with the EidoGo SGF viewer and editor.
@@ -128,9 +128,8 @@ problem from any of the uploaded SGF problem files. Note: it only chooses from
 those in your media library (attachements). It won't include those embedded
 inline.
 
-I'll be adding a feature shortly that lets you create a page with an index of
-problems and an index of games (again, those uploaded as attachments, not
-those embedded inline).
+There's also a widget that lets you browse problems by category or difficulty,
+and one to browse games by category.
 
 = How did you get the really compact layout with tiny stones in that screenshot of the random problem widget? =
 
@@ -289,8 +288,6 @@ Some stuff I plan to do in the future:
   (it'll be cool!)
 * Pull information from SGF file to set the default title and summary
   information on upload
-* Store additional metadata about uploaded SGF files
-* More options in random problem widget
 
 == Legal ==
 
