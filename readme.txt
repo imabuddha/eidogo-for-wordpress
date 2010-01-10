@@ -212,6 +212,9 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 * Style tweaks including styles for 9x9 and 13x13 boards in tiny mode
 * Added Problem Category, Problem Difficulty and Game Category using
   wordpress taxonomies
+* Widget to browse problems and games by category and difficulty
+* Option to exclude unpublished problems from random problem widget
+* Select problems for random problem widget by category and/or difficulty
 
 = 0.8.5 =
 * Changed `embed_attachment()` to not work by invoking filters, which had

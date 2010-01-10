@@ -29,4 +29,17 @@ input[type="radio"] {
 	border: 0 !important;
 }
 
+.wpeidogo_checkgroup {
+	height: 100px;
+	overflow-y: scroll;
+	border: 1px solid #dddddd;
+	padding: 3px !important;
+	border-radius: 8px;
+}
+
+h5.wpeidogo_checkgroup_title {
+	margin-bottom: 0;
+	font-size: 100%;
+}
+
 /* vim: set ts=4 sts=4 sw=4 noet : */

@@ -36,6 +36,8 @@ class WpEidoGoRandomProblemWidget extends WP_Widget { # {{{
 	} # }}}
 
 	function widget($args, $instance) { # {{{
+		global $wpdb;
+
 		$title = apply_filters('widget_title',
 			(empty($instance['title']) ? __('Random Go Problem') : $instance['title']));
 
@@ -49,15 +51,64 @@ class WpEidoGoRandomProblemWidget extends WP_Widget { # {{{
 			'post_type' => 'attachment',
 		);
 
-		$problem = __('No suitable problems were found.');
+		$joins = '';
+		$where = '';
+
+		foreach (array('width', 'height') as $key) {
+			if (!$instance['max_'.$key])
+				continue;
+			$max_val = (int)$instance['max_'.$key];
+			$joins .= "INNER JOIN $wpdb->postmeta AS pm_$key ON pm_$key.post_id = p.ID AND pm_$key.meta_key = '_wpeidogo_pattern_$key'\n";
+			$where .= "AND pm_$key.meta_value <= $max_val\n";
+		}
+
+		foreach (array('category', 'difficulty') as $tax) {
+			$ptax = 'problem_'.$tax;
+			if (!is_array($instance[$ptax]) || $instance[$ptax]['all'])
+				continue;
+			$joins .= "INNER JOIN $wpdb->term_relationships AS tr_$tax ON tr_$tax.object_id = p.ID\n";
+			$joins .= "INNER JOIN $wpdb->term_taxonomy AS tt_$tax ON tt_$tax.term_taxonomy_id = tr_$tax.term_taxonomy_id AND tt_$tax.taxonomy = '$ptax'\n";
+			$ids = array();
+			foreach ($instance[$ptax] as $term_id => $use)
+				if ($use) $ids[] = (int)$term_id;
+			$where .= "AND tt_$tax.term_id in (" . join(', ', $ids) . ")\n";
+		}
+
+		if ($instance['exclude_unpublished']) {
+			$joins .= "INNER JOIN $wpdb->posts AS p2 on p2.ID = p.post_parent\n";
+			$where .= "AND (p.post_status = 'publish' OR (p.post_status = 'inherit' AND p2.post_status = 'publish'))\n";
+		}
+
+		$query = "
+			SELECT DISTINCT p.ID, p.post_excerpt, p.guid
+			FROM $wpdb->posts AS p
+			INNER JOIN $wpdb->postmeta pmt ON pmt.post_id = p.ID AND pmt.meta_key = '_wpeidogo_theme'
+			$joins
+			WHERE p.post_type = 'attachment'
+				AND p.post_mime_type = 'application/x-go-sgf'
+				AND pmt.meta_value = 'problem'
+				$where
+			ORDER BY rand()
+			LIMIT 1
+			";
+
+		$posts = $wpdb->get_results($query);
+		if (sizeof($posts))
+			$problem = wpeidogo_embed_attachment($posts[0], null, null, '');
+		else
+			$problem = '<p>' . __('No suitable problems were found.') . '</p>';
+		#$problem = '<pre class="debug" style="position: relative; width: 5000px;">'.htmlspecialchars($query).'</pre>';
+		/*
 		$posts = get_posts($query_args);
 		foreach ($posts as $post) {
 
 			$custom = get_post_custom($post->ID);
-			if (!$custom['_wpeidogo_sgf_metadata'] || !$custom['_wpeidogo_sgf_metadata'][0])
+			if (!$custom['_wpeidogo_pattern_width'] || !$custom['_wpeidogo_pattern_width'][0])
 				continue;
-			$width = $custom['_wpeidogo_sgf_metadata'][0]['pattern_width'];
-			$height = $custom['_wpeidogo_sgf_metadata'][0]['pattern_height'];
+			if (!$custom['_wpeidogo_pattern_height'] || !$custom['_wpeidogo_pattern_height'][0])
+				continue;
+			$width = $custom['_wpeidogo_pattern_width'][0];
+			$height = $custom['_wpeidogo_pattern_height'][0];
 
 			if ($instance['max_width'])
 				if (!$width || $width > $instance['max_width'])
@@ -70,6 +121,7 @@ class WpEidoGoRandomProblemWidget extends WP_Widget { # {{{
 			$problem = wpeidogo_embed_attachment($post, null, null, '');
 			break;
 		}
+		*/
 
 		echo $before_widget . $before_title . $title . $after_title . $problem . $after_widget;
 
@@ -81,39 +133,79 @@ class WpEidoGoRandomProblemWidget extends WP_Widget { # {{{
 		$instance['title'] = $new_instance['title'];
 		$instance['max_width'] = (int)$new_instance['max_width'];
 		$instance['max_height'] = (int)$new_instance['max_height'];
+		$instance['exclude_unpublished'] = ($new_instance['exclude_unpublished'] ? 1 : 0);
+		foreach (array('problem_category', 'problem_difficulty') as $taxonomy) {
+			$instance[$taxonomy] = array('all' => ($new_instance["$taxonomy-all"] ? 1 : 0));
+			$terms = get_terms($taxonomy, array('hide_empty' => false, 'fields' => 'ids'));
+			foreach ($terms as $term_id)
+				if ($new_instance["$taxonomy-$term_id"])
+					$instance[$taxonomy][$term_id] = 1;
+		}
 
 		return $instance;
 	} # }}}
 
-	function form($instance) { # {{{
-		$title = attribute_escape($instance['title']);
+	function draw_simple_field($name, $label, $value, $type='text') { # {{{
+		$f_name = $this->get_field_name($name);
+		$f_id = $this->get_field_id($name);
+		$value = attribute_escape($value);
+		$label = htmlspecialchars($label);
+		if ($type == 'text') {
+			return <<<html
+			<p><label for="{$f_id}">{$label}
+				<input id="{$f_id}" name="{$f_name}" value="{$value}" class="widefat" /></p>
+html;
+		} elseif ($type == 'checkbox') {
+			$checked = ($value ? 'checked="checked"' : '');
+			return <<<html
+			<input id="{$f_id}" name="{$f_name}" type="{$type}" {$checked} value="1" />
+				<label for="{$f_id}">{$label}</label>
+html;
+		}
+	} # }}}
 
+	function terms_checkboxes($title, $all, $taxonomy, $current_terms) { # {{{
+		$checks = array();
+		$terms = get_terms($taxonomy, array('hide_empty' => false));
+
+		$name = "{$taxonomy}-all";
+		$checked = ($current_terms['all'] ? 1 : 0);
+		$checks[] = $this->draw_simple_field($name, $all, $checked, 'checkbox');
+
+		foreach ($terms as $t) {
+			$name = "{$taxonomy}-{$t->term_id}";
+			$checked = ($current_terms[$t->term_id] ? 1 : 0);
+			$checks[] = $this->draw_simple_field($name, $t->name, $checked, 'checkbox');
+		}
+
+		# TODO: Add some script to disable checkboxes when "all" is checked
+
+		return '<h5 class="wpeidogo_checkgroup_title">' . $title . '</h5>' .
+			'<p class="wpeidogo_checkgroup">' . join("<br />", $checks) . '</p>';
+	} # }}}
+
+	function form($instance) { # {{{
 		if (!$max_width = (int)$instance['max_width'])
 			$max_width = '';
-
 		if (!$max_height = (int)$instance['max_height'])
 			$max_height = '';
 
-		$title_id = $this->get_field_id('title');
-		$max_width_id = $this->get_field_id('max_width');
-		$max_height_id = $this->get_field_id('max_height');
+		if (!$problem_category = $instance['problem_category'])
+			$problem_category = array('all' => 1);
+		if (!$problem_difficulty = $instance['problem_difficulty'])
+			$problem_difficulty = array('all' => 1);
 
-		$title_name = $this->get_field_name('title');
-		$max_width_name = $this->get_field_name('max_width');
-		$max_height_name = $this->get_field_name('max_height');
+		$exclude_unpublished = ($instance['exclude_unpublished'] ? 1 : 0);
 
-		$title_label = __('Title:');
-		$max_width_label = __('Max Width:');
-		$max_height_label = __('Max Height:');
-
-		echo <<<html
-			<p><label for="{$title_id}">{$title_label}
-				<input id="{$title_id}" name="{$title_name}" value="{$title}" class="widefat" /></label></p>
-			<p><label for="{$max_width_id}">{$max_width_label}</label>
-				<input id="{$max_width_id}" name="{$max_width_name}" value="{$max_width}" /></label></p>
-			<p><label for="{$max_height_id}">{$max_height_label}</label>
-				<input id="{$max_height_id}" name="{$max_height_name}" value="{$max_height}" /></label></p>
-html;
+		echo $this->draw_simple_field('title', __('Title:'), $instance['title']) .
+			$this->draw_simple_field('max_width', __('Max Width:'), $max_width) .
+			$this->draw_simple_field('max_height', __('Max Height:'), $max_height) .
+			$this->terms_checkboxes(__('Problem Category:'), __('All Categories'),
+				'problem_category', $problem_category) .
+			$this->terms_checkboxes(__('Problem Difficulty:'), __('All Difficulties'),
+				'problem_difficulty', $problem_difficulty) .
+			'<p>' .  $this->draw_simple_field('exclude_unpublished',
+				__('Exclude Unpublished Problems'), $exclude_unpublished, 'checkbox') .  '</p>';
 	} # }}}
 
 } # }}}
@@ -355,11 +447,11 @@ class WpEidoGoPlugin {
 	} # }}}
 
 	function add_admin_menu_options() { # {{{
-		add_submenu_page('upload.php', 'Game Categories', 'Game Categories', 'manage_categories',
+		add_submenu_page('upload.php', __('Game Categories'), __('Game Categories'), 'manage_categories',
 			'edit-tags.php?taxonomy=game_category');
-		add_submenu_page('upload.php', 'Problem Categories', 'Problem Categories', 'manage_categories',
+		add_submenu_page('upload.php', __('Problem Categories'), __('Problem Categories'), 'manage_categories',
 			'edit-tags.php?taxonomy=problem_category');
-		add_submenu_page('upload.php', 'Problem Difficulties', 'Problem Difficulties', 'manage_categories',
+		add_submenu_page('upload.php', __('Problem Difficulties'), __('Problem Difficulties'), 'manage_categories',
 			'edit-tags.php?taxonomy=problem_difficulty');
 	} # }}}
 
@@ -397,10 +489,23 @@ class WpEidoGoPlugin {
 	} # }}}
 
 	function activate_plugin() { # {{{
+		global $wp_rewrite, $wpdb;
+
 		$this->register_taxonomies();
-		global $wp_rewrite;
 		$wp_rewrite->flush_rules();
-		# TODO: refresh metadata for SGF attachments
+
+		$query = "
+			SELECT ID
+			FROM $wpdb->posts
+			WHERE post_mime_type = '$this->sgf_mime_type'
+			";
+		$sgf_posts = $wpdb->get_results($query);
+		foreach ($sgf_posts as $post) {
+			list($meta, $pattern_width, $pattern_height) = $this->get_sgf_metadata($post->ID);
+			update_post_meta($post->ID, '_wpeidogo_pattern_width', $pattern_width);
+			update_post_meta($post->ID, '_wpeidogo_pattern_height', $pattern_height);
+			update_post_meta($post->ID, '_wpeidogo_sgf_metadata', $meta);
+		}
 	} # }}}
 
 	/* HTML header */
@@ -583,10 +688,12 @@ html;
 		return true;
 	} # }}}
 
-	function get_sgf_metadata($post) { # {{{
-		$fn = get_attached_file($post['ID']);
+	function get_sgf_metadata($post_id) { # {{{
+		$fn = get_attached_file($post_id);
 		$meta = array();
-		$contents = file_get_contents($fn, 0, null, 0, 65536);
+		$contents = @file_get_contents($fn, 0, null, 0, 65536);
+		if (!$contents)
+			return array(null, null, null);
 		$matches = array();
 
 		# These are all game-info or root type nodes, and none are list types.
@@ -661,7 +768,7 @@ html;
 
 		# Only process go SGF files
 		if (!$meta['GM'] || $meta['GM'] != 1)
-			return $meta;
+			return array($meta, null, null);
 
 		# Searches same set of SGF attributes as EidoGo does for problem mode
 		preg_match_all('/(W|B|AW|AB|LB)((\[([a-z]{2}(:[a-z]{2})?)\]\s*)+)/s', $contents, $matches);
@@ -686,14 +793,27 @@ html;
 		}
 
 		if (is_null($l)) {
-			$meta['pattern_width'] = 0;
-			$meta['pattern_height'] = 0;
+			$pattern_width = null;
+			$pattern_height = null;
 		} else {
-			$meta['pattern_width'] = $r-$l+1;
-			$meta['pattern_height'] = $b-$t+1;
+			# Get board dimensions
+			$sz = ($meta['SZ'] ? $meta['SZ'] : array(19));
+			if (sizeof($sz) > 1) {
+				$width = $sz[0];
+				$height = $sz[1];
+			} else {
+				$width = $height = $sz[0];
+			}
+			# Include padding
+			if ($l > 0) $l -= 1;
+			if ($t > 0) $t -= 1;
+			if ($r < $width-1) $r += 1;
+			if ($b < $height-1) $b += 1;
+			$pattern_width = $r-$l+1;
+			$pattern_height = $b-$t+1;
 		}
 
-		return $meta;
+		return array($meta, $pattern_width, $pattern_height);
 	} # }}}
 
 	function save_sgf_info($post, $input) { # {{{
@@ -709,7 +829,10 @@ html;
 		update_post_meta($post['ID'], '_wpeidogo_theme', $input['eidogo_theme']);
 		update_post_meta($post['ID'], '_wpeidogo_embed_method', $input['embed_method']);
 		update_post_meta($post['ID'], '_wpeidogo_problem_color', $input['problem_color']);
-		update_post_meta($post['ID'], '_wpeidogo_sgf_metadata', $this->get_sgf_metadata($post));
+		list($meta, $pattern_width, $pattern_height) = $this->get_sgf_metadata($post['ID']);
+		update_post_meta($post['ID'], '_wpeidogo_pattern_width', $pattern_width);
+		update_post_meta($post['ID'], '_wpeidogo_pattern_height', $pattern_height);
+		update_post_meta($post['ID'], '_wpeidogo_sgf_metadata', $meta);
 
 		return $post;
 	} # }}}
@@ -944,7 +1067,7 @@ html;
 			$params['problemcolor'] = strtoupper(substr($params['problemcolor'], 0, 1));
 		elseif (preg_match('/PL\[(W|B)\]/', $sgf_data, $pgroups))
 			$params['problemcolor'] = $pgroups[1];
-		# TODO: Work for sgfUrl things
+		# TODO: Make this work for sgfUrl things
 
 		# Default to view mode except if we're a problem
 		if (!$params['mode'] && $theme != 'problem')
