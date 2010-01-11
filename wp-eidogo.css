@@ -181,6 +181,20 @@
 	font-style: inherit;
 }
 
+.eidogo-player .comments .wstone {
+	background: transparent url(tiny-theme/images/w.png) no-repeat scroll center center;
+	padding: 4px;
+	font-style: inherit;
+	color: black;
+}
+
+.eidogo-player .comments .bstone {
+	background: transparent url(tiny-theme/images/b.png) no-repeat scroll center center;
+	padding: 4px;
+	font-style: inherit;
+	color: white;
+}
+
 /* Basic layout within the page */
 .wp-eidogo  {
 	margin: 1.25em 0;
