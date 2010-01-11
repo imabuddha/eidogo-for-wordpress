@@ -93,10 +93,19 @@ class WpEidoGoRandomProblemWidget extends WP_Widget { # {{{
 			";
 
 		$posts = $wpdb->get_results($query);
-		if (sizeof($posts))
-			$problem = wpeidogo_embed_attachment($posts[0], null, null, '');
-		else
+		if (sizeof($posts)) {
+			$problem = wpeidogo_embed_attachment($posts[0], null, '', '');
+			$cat = get_the_term_list($posts[0]->ID, 'problem_category', 'Category: ', ', ', '');
+			$dif = get_the_term_list($posts[0]->ID, 'problem_difficulty', 'Difficulty: ', ', ', '');
+			$problem .= <<<html
+			<p class='problem-info'>
+				<span class='problem-category'>$cat</span><br />
+				<span class='problem-difficulty'>$dif</span>
+			</p>
+html;
+		} else {
 			$problem = '<p>' . __('No suitable problems were found.') . '</p>';
+		}
 		#$problem = '<pre class="debug" style="position: relative; width: 5000px;">'.htmlspecialchars($query).'</pre>';
 		/*
 		$posts = get_posts($query_args);
