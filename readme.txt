@@ -207,6 +207,10 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 
 == Changelog ==
 
+= 0.8.7 =
+* Showing problem category and difficulty in random problem widget
+* Allow showing or hiding unpublished problems globally
+
 = 0.8.6 =
 * Style tweaks including styles for 9x9 and 13x13 boards in tiny mode
 * Added Problem Category, Problem Difficulty and Game Category using
@@ -270,7 +274,11 @@ SGF support is now integrated with the media library so adding SGF files is
 now much easier.
 
 = 0.8.3 =
-Lots of polish-type enhancements and some Internet Explorer fixes
+Lots of polish-type enhancements and some Internet Explorer fixes.
+
+= 0.8.7 =
+Browse problems by type or difficulty and, enhanced random problem widget,
+improved display in RSS feeds.
 
 == Roadmap ==
 

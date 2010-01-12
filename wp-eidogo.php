@@ -74,7 +74,7 @@ class WpEidoGoRandomProblemWidget extends WP_Widget { # {{{
 			$where .= "AND tt_$tax.term_id in (" . join(', ', $ids) . ")\n";
 		}
 
-		if ($instance['exclude_unpublished']) {
+		if (!get_option('wpeidogo_show_unpublished_problems')) {
 			$joins .= "INNER JOIN $wpdb->posts AS p2 on p2.ID = p.post_parent\n";
 			$where .= "AND (p.post_status = 'publish' OR (p.post_status = 'inherit' AND p2.post_status = 'publish'))\n";
 		}
@@ -95,11 +95,11 @@ class WpEidoGoRandomProblemWidget extends WP_Widget { # {{{
 		$posts = $wpdb->get_results($query);
 		if (sizeof($posts)) {
 			$problem = wpeidogo_embed_attachment($posts[0], null, '', '');
-			$cat = get_the_term_list($posts[0]->ID, 'problem_category', 'Category: ', ', ', '');
-			$dif = get_the_term_list($posts[0]->ID, 'problem_difficulty', 'Difficulty: ', ', ', '');
+			$cat = get_the_term_list($posts[0]->ID, 'problem_category', '', ', ', '');
+			$dif = get_the_term_list($posts[0]->ID, 'problem_difficulty', '', ', ', '');
 			$problem .= <<<html
 			<p class='problem-info'>
-				<span class='problem-category'>$cat</span><br />
+				<span class='problem-category'>$cat</span>
 				<span class='problem-difficulty'>$dif</span>
 			</p>
 html;
@@ -142,7 +142,7 @@ html;
 		$instance['title'] = $new_instance['title'];
 		$instance['max_width'] = (int)$new_instance['max_width'];
 		$instance['max_height'] = (int)$new_instance['max_height'];
-		$instance['exclude_unpublished'] = ($new_instance['exclude_unpublished'] ? 1 : 0);
+		unset($instance['exclude_unpublished']); # unused option
 		foreach (array('problem_category', 'problem_difficulty') as $taxonomy) {
 			$instance[$taxonomy] = array('all' => ($new_instance["$taxonomy-all"] ? 1 : 0));
 			$terms = get_terms($taxonomy, array('hide_empty' => false, 'fields' => 'ids'));
@@ -204,17 +204,13 @@ html;
 		if (!$problem_difficulty = $instance['problem_difficulty'])
 			$problem_difficulty = array('all' => 1);
 
-		$exclude_unpublished = ($instance['exclude_unpublished'] ? 1 : 0);
-
 		echo $this->draw_simple_field('title', __('Title:'), $instance['title']) .
 			$this->draw_simple_field('max_width', __('Max Width:'), $max_width) .
 			$this->draw_simple_field('max_height', __('Max Height:'), $max_height) .
 			$this->terms_checkboxes(__('Problem Category:'), __('All Categories'),
 				'problem_category', $problem_category) .
 			$this->terms_checkboxes(__('Problem Difficulty:'), __('All Difficulties'),
-				'problem_difficulty', $problem_difficulty) .
-			'<p>' .  $this->draw_simple_field('exclude_unpublished',
-				__('Exclude Unpublished Problems'), $exclude_unpublished, 'checkbox') .  '</p>';
+				'problem_difficulty', $problem_difficulty);
 	} # }}}
 
 } # }}}
@@ -344,12 +340,44 @@ class WpEidoGoPlugin {
 	var $sgf_count = 0;
 	var $sgf_prepared_markup = array();
 	var $sgf_mime_type = 'application/x-go-sgf';
+	var $fudge_unpublished = false;
 
 	/* Initialization */
 	function WpEidoGoPlugin() { # {{{
 		$this->plugin_url = WP_PLUGIN_URL . '/eidogo-for-wordpress';
 		$this->plugin_dir = WP_PLUGIN_DIR . '/eidogo-for-wordpress';
 		$this->setup_hooks();
+	} # }}}
+
+	function setup_options() {
+		add_settings_section('wpeidogo_sgf_options', __('SGF File Handling'),
+			array(&$this, 'sgf_options_section'), 'media');
+		add_settings_field('wpeidogo_show_unpublished_problems', 'Unpublished Problems',
+			array(&$this, 'show_unpublished_problems_option'), 'media', 'wpeidogo_sgf_options');
+		register_setting('media', 'wpeidogo_show_unpublished_problems');
+	}
+
+	function sgf_options_section() { # {{{
+		echo <<<html
+		<p>EidoGo for WordPress will normally only select problems that have
+		been published (e.g. attached to a page or post) for the random problem
+		widget and only show published problems when browsing problems by
+		category or difficulty. This option will let you see unpublished and
+		unattached problem (useful if you have uploaded a bunch of problem
+		files and don't really want to write a post just to get them to
+		display).</p>
+html;
+	} # }}}
+
+	function show_unpublished_problems_option() { # {{{
+		$checked = '';
+		if (get_option('wpeidogo_show_unpublished_problems'))
+			$checked = 'checked="checked"';
+		echo <<<html
+		<label for="wpeidogo_show_unpublished_problems"><input type="checkbox" value="1"
+			{$checked} name="wpeidogo_show_unpublished_problems" id="wpeidogo_show_unpublished_problems" />
+			Show Unpublished Problems</label>
+html;
 	} # }}}
 
 	function setup_hooks() { # {{{
@@ -390,10 +418,26 @@ class WpEidoGoPlugin {
 
 		# For admin menu options
 		add_action('admin_menu', array(&$this, 'add_admin_menu_options'));
+		add_action('admin_init', array(&$this, 'setup_options'));
 
 		# When the plugin is activated
 		register_activation_hook(__FILE__, array(&$this, 'activate_plugin'));
 
+		if (get_option('wpeidogo_show_unpublished_problems'))
+			add_filter('posts_where', array(&$this, 'include_unpublished_problems'), 10, 3);
+	} # }}}
+
+	function include_unpublished_problems($where) { # {{{
+		global $wpdb;
+		if (!$this->fudge_unpublished)
+			return $where;
+
+		$where = str_replace("({$wpdb->posts}.post_status = 'publish')",
+			"({$wpdb->posts}.post_status = 'publish' OR {$wpdb->posts}.post_type = 'attachment')",
+			$where);
+
+		$this->fudge_unpublished = false;
+		return $where;
 	} # }}}
 
 	function fix_term_count($terms, $taxonomies, $args) { # {{{
@@ -406,6 +450,13 @@ class WpEidoGoPlugin {
 		# get an accurate count and filters things accordingly.
 
 		# This may be unnecessary in a future WordPress version.
+
+		# Check to see if "display unpublished option is on
+		if (get_option('wpeidogo_show_unpublished_problems') && sizeof($taxonomies) == 1 &&
+				($taxonomies[0] == 'problem_category' || $taxonomies[0] == 'problem_difficulty')) {
+			$this->fudge_unpublished = true;
+			return $terms;
+		}
 
 		if (!$args['fix_counts'])
 			return $terms;
