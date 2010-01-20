@@ -34,7 +34,8 @@ input[type="radio"] {
 	overflow-y: scroll;
 	border: 1px solid #dddddd;
 	padding: 3px !important;
-	border-radius: 8px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
 }
 
 h5.wpeidogo_checkgroup_title {

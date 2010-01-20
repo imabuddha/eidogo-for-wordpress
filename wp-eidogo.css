@@ -171,6 +171,7 @@
 	margin-bottom: 0;
 }
 
+/* Some fancy markup for comments */
 .eidogo-player .comments .right {
 	color: #008000;
 	font-style: inherit;
@@ -182,14 +183,14 @@
 }
 
 .eidogo-player .comments .wstone {
-	background: transparent url(tiny-theme/images/w.png) no-repeat scroll center center;
+	background: transparent url(tiny-theme/w.png) no-repeat scroll center center;
 	padding: 4px;
 	font-style: inherit;
 	color: black;
 }
 
 .eidogo-player .comments .bstone {
-	background: transparent url(tiny-theme/images/b.png) no-repeat scroll center center;
+	background: transparent url(tiny-theme/b.png) no-repeat scroll center center;
 	padding: 4px;
 	font-style: inherit;
 	color: white;
@@ -221,7 +222,7 @@
 	margin: 0 auto;
 }
 
-/* For sidebar EidoGo widget */
+/* Make theme for widget more compact */
 .widget-random-go-problem .wp-eidogo {
 	text-align: center;
 }
@@ -230,4 +231,99 @@
 	margin: 0 auto;
 }
 
+.widget-random-go-problem .eidogo-player.theme-problem .board.size19 {
+	width: 253px !important;
+	height: 253px !important;
+	background-image: url(tiny-theme/board-19.png);
+}
+
+.widget-random-go-problem .eidogo-player.theme-problem .board.size13 {
+	width: 175px !important;
+	height: 175px !important;
+	background-image: url(tiny-theme/board-13.png);
+}
+
+.widget-random-go-problem .eidogo-player.theme-problem .board.size9 {
+	width: 123px !important;
+	height: 123px !important;
+	background-image: url(tiny-theme/board-9.png);
+}
+
+.widget-random-go-problem .eidogo-player.theme-problem .board .point {
+	width: 13px !important;
+	height: 13px !important;
+	overflow: hidden; /* for IE6 */
+}
+
+.widget-random-go-problem .eidogo-player.theme-problem .board .point.stone.white {
+	background-image: url(tiny-theme/w.png);
+}
+
+.widget-random-go-problem .eidogo-player.theme-problem .board .point.stone.black {
+	background-image: url(tiny-theme/b.png);
+}
+
+.widget-random-go-problem .eidogo-player.theme-problem .board .point.marker {
+	background-image: url(tiny-theme/markers.png);
+}
+
+.widget-random-go-problem .eidogo-player.theme-problem .board .point.marker.dim {
+	background-image: url(tiny-theme/dim.png);
+}
+
+.widget-random-go-problem .eidogo-player.theme-problem .board .point.marker.circle {
+	background-position: 0 0;
+}
+
+.widget-random-go-problem .eidogo-player.theme-problem .board .point.marker.square {
+	background-position: 0 -13px;
+}
+
+.widget-random-go-problem .eidogo-player.theme-problem .board .point.marker.triangle {
+	background-position: 0 -26px;
+}
+
+.widget-random-go-problem .eidogo-player.theme-problem .board .point.marker.ex {
+	background-position: 0 -39px;
+}
+
+.widget-random-go-problem .eidogo-player.theme-problem .board .point.marker.current {
+	background-position: 0 -52px;
+}
+
+.widget-random-go-problem .eidogo-player.theme-problem .board .point.marker.territory-white {
+	background-position: 0 -65px;
+}
+
+.widget-random-go-problem .eidogo-player.theme-problem .board .point.marker.territory-black {
+	background-position: 0 -78px;
+}
+
+/* Make tiny text in widget aligned correctly and more readable */
+.widget-random-go-problem .eidogo-player.theme-problem .board .point.marker.label {
+	padding: 0;
+	font-size: 12px;
+	line-height: 13px;
+	text-align: center;
+	background: none;
+	text-shadow: #705f36 1px 1px 1px;
+}
+
+/* Smaller comment layout for widget */
+.widget-random-go-problem .eidogo-player.theme-problem .comments {
+	height: auto !important;
+	min-height: 33px !important;
+	line-height: 11px !important;
+	font-size: 10px;
+	padding: 3px;
+}
+
+/* Fix controls for really tiny problems */
+.widget-random-go-problem .eidogo-player.theme-problem {
+	overflow: hidden;
+}
+
+.widget-random-go-problem .eidogo-player.theme-problem .controls {
+	min-width: 88px;
+}
 /* vim: set ts=4 sts=4 sw=4 noet : */

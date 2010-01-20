@@ -4,7 +4,7 @@ Donate link: href="http://www.amazon.com/gp/redirect.html?ie=UTF8&location=http%
 Tags: widget, go, weiqi, baduk, sgf, EidoGo
 Requires at least: 2.8
 Tested up to: 2.9.1
-Stable tag: 0.8.6
+Stable tag: 0.8.7
 
 EidoGo for WordPress makes it easy to embed SGF files in your WordPress-powered
 blog with the EidoGo SGF viewer and editor.
@@ -129,15 +129,11 @@ those in your media library (attachements). It won't include those embedded
 inline.
 
 There's also a widget that lets you browse problems by category or difficulty,
-and one to browse games by category.
-
-= How did you get the really compact layout with tiny stones in that screenshot of the random problem widget? =
-
-You can do a lot with EidoGo and stylesheets. I've included an example
-stylesheet and the images I used in a the `tiny-theme` directory. The exact
-details of the stylesheet will depend on your theme, but the example should
-have the information you need to get you started. In many cases, just
-appending the stylesheet to your theme's style.css will do the job.
+and one to browse games by category. For this to work nicely, you'll want to
+make sure your theme does a good job of handling WordPress's custom taxonomies
+(which is what the plugin uses to categorize problems) and can invoke eidogo
+to display SGF attachments. Check out the `eidogo-for-wordpress/examples`
+directory, and also the next FAQ question.
 
 = Can I make SGF files show up nicely on the attachment page? =
 
@@ -175,6 +171,13 @@ center the SGF file, pass `'aligncenter'` for `$class`. By default, `$class`
 is `null`, `$href` is a direct link to download the SGF file (the other
 parameters use the saved values.)
 
+Take a look in the `eidogo-for-wordpress/examples/` directory to see some
+files from my theme that handle this.
+
+= How did you get the really compact layout with tiny stones in that screenshot of the random problem widget? =
+
+As of version 0.8.7 of the plugin, this should be handled automatically.
+
 = I'm getting an error message in Internet Explorer 6 (or older) telling me to upgrade. =
 
 Yeah, the plugin doesn't work with IE 6 or older. EidoGo can be made to work
@@ -209,7 +212,8 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 
 = 0.8.7 =
 * Showing problem category and difficulty in random problem widget
-* Allow showing or hiding unpublished problems globally
+* Make showing/hiding unpublished problems a global setting
+* Integrating tiny widget theme with default plugin styles
 
 = 0.8.6 =
 * Style tweaks including styles for 9x9 and 13x13 boards in tiny mode
