@@ -159,6 +159,31 @@
 	width: 207px;
 }
 
+/* Use black and white depending on context (more readable than red) */
+.eidogo-player .board .point.marker.label {
+	color: black !important;
+}
+
+.eidogo-player .board .point.marker.label.on-black {
+	color: white !important;
+}
+
+.eidogo-player .board .point.marker {
+	background: transparent url(images/markers.png) no-repeat scroll -76px 0px !important;
+}
+
+.eidogo-player .board .point.marker.triangle          { background-position:   0px -19px !important; }
+.eidogo-player .board .point.marker.square            { background-position: -19px -19px !important; }
+.eidogo-player .board .point.marker.circle            { background-position: -38px -19px !important; }
+.eidogo-player .board .point.marker.ex                { background-position: -57px -19px !important; }
+.eidogo-player .board .point.marker.current           { background-position: -76px -19px !important; }
+.eidogo-player .board .point.marker.territory-white   { background-position: -95px -19px !important; }
+.eidogo-player .board .point.marker.territory-black   { background-position: -95px   0px !important; }
+.eidogo-player .board .point.marker.triangle.on-black { background-position:   0px   0px !important; }
+.eidogo-player .board .point.marker.square.on-black   { background-position: -19px   0px !important; }
+.eidogo-player .board .point.marker.circle.on-black   { background-position: -38px   0px !important; }
+.eidogo-player .board .point.marker.ex.on-black       { background-position: -57px   0px !important; }
+
 /* For problem mode, make sure three lines are exactly visible for neatness */
 .wp-eidogo-problem .comments {
 	height: auto !important;
@@ -173,7 +198,7 @@
 
 /* Some fancy markup for comments */
 .eidogo-player .comments .right {
-	color: #008000;
+	color: #0000aa;
 	font-style: inherit;
 }
 
@@ -183,14 +208,14 @@
 }
 
 .eidogo-player .comments .wstone {
-	background: transparent url(tiny-theme/w.png) no-repeat scroll center center;
+	background: transparent url(images/tiny-theme/w.png) no-repeat scroll center center;
 	padding: 4px;
 	font-style: inherit;
 	color: black;
 }
 
 .eidogo-player .comments .bstone {
-	background: transparent url(tiny-theme/b.png) no-repeat scroll center center;
+	background: transparent url(images/tiny-theme/b.png) no-repeat scroll center center;
 	padding: 4px;
 	font-style: inherit;
 	color: white;
@@ -234,19 +259,19 @@
 .widget-random-go-problem .eidogo-player.theme-problem .board.size19 {
 	width: 253px !important;
 	height: 253px !important;
-	background-image: url(tiny-theme/board-19.png);
+	background-image: url(images/tiny-theme/board-19.png);
 }
 
 .widget-random-go-problem .eidogo-player.theme-problem .board.size13 {
 	width: 175px !important;
 	height: 175px !important;
-	background-image: url(tiny-theme/board-13.png);
+	background-image: url(images/tiny-theme/board-13.png);
 }
 
 .widget-random-go-problem .eidogo-player.theme-problem .board.size9 {
 	width: 123px !important;
 	height: 123px !important;
-	background-image: url(tiny-theme/board-9.png);
+	background-image: url(images/tiny-theme/board-9.png);
 }
 
 .widget-random-go-problem .eidogo-player.theme-problem .board .point {
@@ -256,57 +281,41 @@
 }
 
 .widget-random-go-problem .eidogo-player.theme-problem .board .point.stone.white {
-	background-image: url(tiny-theme/w.png);
+	background-image: url(images/tiny-theme/w.png);
 }
 
 .widget-random-go-problem .eidogo-player.theme-problem .board .point.stone.black {
-	background-image: url(tiny-theme/b.png);
-}
-
-.widget-random-go-problem .eidogo-player.theme-problem .board .point.marker {
-	background-image: url(tiny-theme/markers.png);
+	background-image: url(images/tiny-theme/b.png);
 }
 
 .widget-random-go-problem .eidogo-player.theme-problem .board .point.marker.dim {
-	background-image: url(tiny-theme/dim.png);
+	background-image: url(images/tiny-theme/dim.png);
 }
 
-.widget-random-go-problem .eidogo-player.theme-problem .board .point.marker.circle {
-	background-position: 0 0;
+.widget-random-go-problem .eidogo-player .board .point.marker {
+	background: transparent url(images/tiny-theme/markers.png) no-repeat scroll -52px 0px !important;
 }
 
-.widget-random-go-problem .eidogo-player.theme-problem .board .point.marker.square {
-	background-position: 0 -13px;
-}
-
-.widget-random-go-problem .eidogo-player.theme-problem .board .point.marker.triangle {
-	background-position: 0 -26px;
-}
-
-.widget-random-go-problem .eidogo-player.theme-problem .board .point.marker.ex {
-	background-position: 0 -39px;
-}
-
-.widget-random-go-problem .eidogo-player.theme-problem .board .point.marker.current {
-	background-position: 0 -52px;
-}
-
-.widget-random-go-problem .eidogo-player.theme-problem .board .point.marker.territory-white {
-	background-position: 0 -65px;
-}
-
-.widget-random-go-problem .eidogo-player.theme-problem .board .point.marker.territory-black {
-	background-position: 0 -78px;
-}
+.widget-random-go-problem .eidogo-player .board .point.marker.triangle          { background-position:   0px -13px !important; }
+.widget-random-go-problem .eidogo-player .board .point.marker.square            { background-position: -13px -13px !important; }
+.widget-random-go-problem .eidogo-player .board .point.marker.circle            { background-position: -26px -13px !important; }
+.widget-random-go-problem .eidogo-player .board .point.marker.ex                { background-position: -39px -13px !important; }
+.widget-random-go-problem .eidogo-player .board .point.marker.current           { background-position: -52px -13px !important; }
+.widget-random-go-problem .eidogo-player .board .point.marker.territory-white   { background-position: -65px -13px !important; }
+.widget-random-go-problem .eidogo-player .board .point.marker.territory-black   { background-position: -65px   0px !important; }
+.widget-random-go-problem .eidogo-player .board .point.marker.triangle.on-black { background-position:   0px   0px !important; }
+.widget-random-go-problem .eidogo-player .board .point.marker.square.on-black   { background-position: -13px   0px !important; }
+.widget-random-go-problem .eidogo-player .board .point.marker.circle.on-black   { background-position: -26px   0px !important; }
+.widget-random-go-problem .eidogo-player .board .point.marker.ex.on-black       { background-position: -39px   0px !important; }
 
 /* Make tiny text in widget aligned correctly and more readable */
 .widget-random-go-problem .eidogo-player.theme-problem .board .point.marker.label {
 	padding: 0;
-	font-size: 12px;
+	font-size: 10px;
 	line-height: 13px;
 	text-align: center;
 	background: none;
-	text-shadow: #705f36 1px 1px 1px;
+	font-weight: normal;
 }
 
 /* Smaller comment layout for widget */
@@ -326,4 +335,5 @@
 .widget-random-go-problem .eidogo-player.theme-problem .controls {
 	min-width: 88px;
 }
+
 /* vim: set ts=4 sts=4 sw=4 noet : */

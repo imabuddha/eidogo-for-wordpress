@@ -3,7 +3,7 @@
 Plugin Name: EidoGo for WordPress
 Plugin URI: http://www.fortmyersgo.org/eidogo-for-wordpress/
 Description: EidoGo for WordPress makes it easy to embed SGF files in your WordPress-powered blog with the EidoGo SGF viewer and editor.
-Version: 0.8.7
+Version: 0.8.8
 Author: Thomas Schumm
 Author URI: http://www.fortmyersgo.org/
 */
@@ -1134,6 +1134,7 @@ html;
 			$params['mode'] = 'view';
 
 		$embed_method = ($theme == 'full' || $theme == 'compact' ? 'iframe' : 'inline');
+		$styles = '';
 
 		if ($theme == 'full-inline' || $theme == 'full') { # {{{
 			$frame_w = 720; $frame_h = 600;
@@ -1175,8 +1176,9 @@ html;
 				'markVariations'    => false,
 				'markNext'          => false,
 				'shrinkToFit'       => true,
-				'problemColor'      => $params['problemcolor'],
 			);
+			if ($params['problemcolor'])
+				$js_config['problemColor'] = $params['problemcolor'];
 		# }}}
 
 		} else {
@@ -1224,7 +1226,7 @@ javascript;
 
 		$this->sgf_prepared_markup[$this->sgf_count] = <<<html
 			<div class="{$class}">
-			<div class="player-container" id="player-container-{$this->sgf_count}"></div>
+			<div class="player-container" id="player-container-{$this->sgf_count}"{$styles}></div>
 			<script type="text/javascript"><!--
 				if (broken_browser) {
 					document.getElementById('player-container-{$this->sgf_count}').innerHTML = broken_browser;

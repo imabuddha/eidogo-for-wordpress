@@ -210,6 +210,11 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 
 == Changelog ==
 
+= 0.8.8 =
+* Minor bug fixes in EidoGo
+* Improved appearance of EidoGo (using black/white text and markers as
+  appropriate instead of hard-to-read red)
+
 = 0.8.7 =
 * Showing problem category and difficulty in random problem widget
 * Make showing/hiding unpublished problems a global setting
