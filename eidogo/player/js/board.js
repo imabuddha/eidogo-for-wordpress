@@ -149,7 +149,12 @@ eidogo.Board.prototype = {
             for (var y = 0; y < this.boardSize; y++) {
                 offset = y * this.boardSize + x;
                 if (markers[offset] != null) {
-                    this.renderer.renderMarker({x: x, y: y}, markers[offset]);
+                    if (this.stones[offset] == null || this.stones[offset] == this.EMPTY) {
+                        color = "empty";
+                    } else {
+                        color = (this.stones[offset] == this.WHITE ? "white" : "black");
+                    }
+                    this.renderer.renderMarker({x: x, y: y}, markers[offset], color);
                     this.lastRender.markers[offset] = markers[offset];
                 }
                 if (stones[offset] == null) {
@@ -207,7 +212,7 @@ eidogo.BoardRendererHtml.prototype = {
         var stone = this.renderStone({x:0,y:0}, "black");
         this.pointWidth = this.pointHeight = stone.offsetWidth;
         this.renderStone({x:0,y:0}, "white"); // just for image caching
-        this.renderMarker({x:0,y:0}, "current"); // just for image caching
+        this.renderMarker({x:0,y:0}, "current", "empty"); // just for image caching
         this.clear();
         this.margin = (this.domNode.offsetWidth - (this.boardSize * this.pointWidth)) / 2;
         
@@ -269,7 +274,7 @@ eidogo.BoardRendererHtml.prototype = {
         }
         return null;
     },
-    renderMarker: function(pt, type) {
+    renderMarker: function(pt, type, color) {
         if (this.renderCache.markers[pt.x][pt.y]) {
             var marker = document.getElementById(this.uniq + "marker-" + pt.x + "-" + pt.y);
             if (marker) {
@@ -306,6 +311,9 @@ eidogo.BoardRendererHtml.prototype = {
             var div = document.createElement("div");
             div.id = this.uniq + "marker-" + pt.x + "-" + pt.y;
             div.className = "point marker " + type;
+            if (color != null) {
+                div.className += " on-" + color;
+            }
             try {
                 div.style.left = (pt.x * this.pointWidth + this.margin - this.scrollX) + "px";
                 div.style.top = (pt.y * this.pointHeight + this.margin - this.scrollY) + "px";
@@ -422,7 +430,7 @@ eidogo.BoardRendererFlash.prototype = {
         this.unrendered = [];
         this.swf.renderStone(pt, color);
     },
-    renderMarker: function(pt, type) {
+    renderMarker: function(pt, type, color) {
         if (!type) return;
         if (!this.swf) {
             this.unrendered.push(['marker', pt, type]);
@@ -494,7 +502,7 @@ eidogo.BoardRendererAscii.prototype = {
         }
         this.domNode.innerHTML = "<pre>" + this.content + "</pre>";
     },
-    renderMarker: function(pt, type) {
+    renderMarker: function(pt, type, color) {
         // I don't think this is possible
     }
 }

@@ -66,7 +66,7 @@ eidogo.Player.prototype = {
         }
     
         // unique id, so we can have more than one player on a page
-        this.uniq = (new Date()).getTime();
+        this.uniq = (new Date()).getTime() + Math.floor(Math.random() * 1000000);
         
         // store for later
         eidogo.players[this.uniq] = this;
