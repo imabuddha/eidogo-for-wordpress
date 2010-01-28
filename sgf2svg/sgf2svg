@@ -3,10 +3,10 @@
 import sgflib, sgfboard, optparse, sys, math
 
 # SVG Templates {{{
-def triangle_points(r=3.5):
+def triangle_points(r=3.5, yoff=0):
     rp = r/math.cos(math.radians(60))
     x = r*math.tan(math.radians(60))
-    points = "%s,%s %s,%s %s,%s" % (0,-rp, x,r, -x,r)
+    points = "%s,%s %s,%s %s,%s" % (0,-rp+yoff, x,r+yoff, -x,r+yoff)
     return points
 
 SVG_HEAD = '''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -393,6 +393,195 @@ THEMES = {
             </symbol>
             <symbol id="markerTW" viewBox="-9.5 -9.5 19 19">
                 <circle class="markerTW" r="3.5" />
+            </symbol>
+
+            <symbol id="markerSL" viewBox="0 0 1 1">
+                <rect class="markerSL" x="0" y="0" width="1" height="1" />
+            </symbol>
+            <symbol id="markerDD" viewBox="0 0 1 1">
+                <rect class="markerDD" x="0" y="0" width="1" height="1" />
+            </symbol>
+
+            <marker id="arrHead" orient="auto" refX="1" refY="2"
+                    markerWidth="5" markerHeight="5">
+                <polygon points="4,2 0,4 1,2 0,0" />
+            </marker>
+        '''
+    }, # }}}
+
+    'tiny': { # {{{
+        'stone_size': 13,
+        'arrowhead_fix': 3,
+        'board_padding': 3.0,
+        'hoshi_size': 3.0,
+        'font_size': 9.0,
+        'line_width': 2.0,
+        'font_family': '"Droid Sans","Trebuchet MS",Arial,Helvetica,sans-serif',
+        'sgf_styles': '''
+            circle.stoneB {
+                fill: url(#blackStoneGradient);
+                stroke: #000000;
+                stroke-width: 1;
+            }
+
+            circle.stoneW {
+                fill: url(#whiteStoneGradient);
+                stroke: #808080;
+                stroke-width: 1;
+            }
+
+            circle.hoshi {
+                fill: #705f36;
+            }
+
+            #boardBackground {
+                fill: #ddbc6b;
+            }
+
+            .grid {
+                stroke: #ae9454;
+                stroke-width: 1.0;
+                stroke-linecap: square;
+            }
+
+            .markerCR, .markerMA, .markerSQ, .markerTR {
+                stroke-width: 1.0;
+                fill-opacity: 0.0;
+            }
+
+            .markerMA {
+                stroke-linecap: square;
+            }
+
+            .markerTR {
+                stroke-linejoin: bevel;
+            }
+
+            .markerCR_W, .markerMA_W, .markerSQ_W, .markerTR_W,
+            .markerCR_None, .markerMA_None, .markerSQ_None, .markerTR_None {
+                stroke: black;
+            }
+
+            .markerCR_B, .markerMA_B, .markerSQ_B, .markerTR_B {
+                stroke: white;
+            }
+
+            .markerCurrent {
+                fill: #ff0000;
+            }
+
+            .markerTB {
+                fill: black;
+            }
+
+            .markerTW {
+                fill: white;
+            }
+
+            .markerSL {
+                fill: #ffffff;
+                fill-opacity: 0.4;
+            }
+
+            .markerDD {
+                fill: #000000;
+                fill-opacity: 0.4;
+            }
+
+            .markerLB {
+                font-family: %(font_family)s;
+                font-size: %(font_size)spx;
+                font-stretch: condensed;
+                text-anchor: middle;
+            }
+
+            .markerLB_W_fg, .markerLB.None_fg {
+                fill: black;
+            }
+
+            .markerLB_B_fg {
+                fill: white;
+            }
+
+            .markerLB_None_bg {
+                fill: #ddbc6b;
+                stroke: #ddbc6b;
+                stroke-width: 3;
+            }
+
+            .markerLB_B_bg {
+                fill: black;
+                stroke: black;
+                stroke-width: 1;
+            }
+
+            .markerLB_W_bg {
+                fill: white;
+                stroke: white;
+                stroke-width: 1;
+            }
+
+            .markerLN, .markerAR {
+                stroke: #0066bb;
+                stroke-width: %(line_width)s;
+                stroke-linecap: round;
+            }
+
+            #arrHead {
+                fill: #0066bb;
+            }
+
+            .markerAR {
+                marker-end: url(#arrHead);
+            }
+        ''',
+        'sgf_defs': '''
+            <symbol id="hoshi" viewBox="-2 -2 4 4">
+                <circle class="hoshi" r="2" />
+            </symbol>
+
+            <radialGradient id="blackStoneGradient"
+                cx="-2" cy="-2" fx="-2" fy="-2" r="7.5" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#505050" stop-opacity="1.0" offset="0.0" />
+                <stop stop-color="#282828" stop-opacity="1.0" offset="0.6" />
+                <stop stop-color="#000000" stop-opacity="1.0" offset="1.0" />
+            </radialGradient>
+            <radialGradient id="whiteStoneGradient"
+                cx="-2" cy="-2" fx="-2" fy="-2" r="7.5" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#ffffff" stop-opacity="1.0" offset="0.0" />
+                <stop stop-color="#ffffff" stop-opacity="1.0" offset="0.3" />
+                <stop stop-color="#d0d0d0" stop-opacity="1.0" offset="1.0" />
+            </radialGradient>
+
+            <symbol id="stoneB" viewBox="-6.5 -6.5 13 13">
+                <circle class="stoneB" r="6" />
+            </symbol>
+            <symbol id="stoneW" viewBox="-6.5 -6.5 13 13">
+                <circle class="stoneW" r="6" />
+            </symbol>
+
+            <symbol id="markerCR" viewBox="-6.5 -6.5 13 13">
+                <circle class="markerCR" r="3" />
+            </symbol>
+            <symbol id="markerMA" viewBox="-6.5 -6.5 13 13">
+                <line class="markerMA" x1="-3" y1="-3" x2="3" y2="3" />
+                <line class="markerMA" x1="-3" y1="3" x2="3" y2="-3" />
+            </symbol>
+            <symbol id="markerSQ" viewBox="-6.5 -6.5 13 13">
+                <rect class="markerSQ" x="-3" y="-3" width="6" height="6" />
+            </symbol>
+            <symbol id="markerTR" viewBox="-6.5 -6.5 13 13">
+                <polygon class="markerTR" points="''' + triangle_points(2.5, 0.5) + '''" />
+            </symbol>
+            <symbol id="markerCurrent" viewBox="-6.5 -6.5 13 13">
+                <rect class="markerCurrent" x="-2.5" y="-2.5" width="5" height="5" />
+            </symbol>
+
+            <symbol id="markerTB" viewBox="-6.5 -6.5 13 13">
+                <circle class="markerTB" r="2.5" />
+            </symbol>
+            <symbol id="markerTW" viewBox="-6.5 -6.5 13 13">
+                <circle class="markerTW" r="2.5" />
             </symbol>
 
             <symbol id="markerSL" viewBox="0 0 1 1">
