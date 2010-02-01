@@ -3,7 +3,7 @@
 Plugin Name: EidoGo for WordPress
 Plugin URI: http://www.fortmyersgo.org/eidogo-for-wordpress/
 Description: EidoGo for WordPress makes it easy to embed SGF files in your WordPress-powered blog with the EidoGo SGF viewer and editor.
-Version: 0.8.8
+Version: 0.8.9
 Author: Thomas Schumm
 Author URI: http://www.fortmyersgo.org/
 */

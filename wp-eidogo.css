@@ -177,6 +177,10 @@
 	background: transparent url(images/markers.png) no-repeat scroll -76px 0px !important;
 }
 
+.eidogo-player .board .point.marker.dim {
+	background: transparent url(eidogo/player/images/dim.png) no-repeat scroll left top !important;
+}
+
 .eidogo-player .board .point.marker.triangle          { background-position:   0px -19px !important; }
 .eidogo-player .board .point.marker.square            { background-position: -19px -19px !important; }
 .eidogo-player .board .point.marker.circle            { background-position: -38px -19px !important; }
