@@ -580,12 +580,17 @@ html;
 			') .
 			'</p>');
 
+		$theme_styles = '';
+		if (file_exists(get_stylesheet_directory() . '/wp-eidogo.css'))
+			$theme_styles = '<link id="wp-eidogo-styles-theme" rel="stylesheet" type="text/css" href="'.
+				get_stylesheet_directory_uri() . '/wp-eidogo.css" />';
 		echo <<<html
-		<link rel="stylesheet" media="all" type="text/css" href="{$this->plugin_url}/wp-eidogo.css" />
 		<link rel="stylesheet" media="all" type="text/css" href="{$this->plugin_url}/eidogo/player/css/player.css" />
-		<script type="text/javascript">
+		<link rel="stylesheet" media="all" type="text/css" href="{$this->plugin_url}/wp-eidogo.css" />
+		$theme_styles
+		<script type="text/javascript"><!--
 			var broken_browser = false;
-		</script>
+		--></script>
 		<!--[if lt IE 7]>
 		<script type="text/javascript">
 			broken_browser = {$ie6_warning};

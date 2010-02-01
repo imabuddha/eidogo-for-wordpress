@@ -4,7 +4,7 @@ Donate link: href="http://www.amazon.com/gp/redirect.html?ie=UTF8&location=http%
 Tags: widget, go, weiqi, baduk, sgf, EidoGo
 Requires at least: 2.8
 Tested up to: 2.9.1
-Stable tag: 0.8.7
+Stable tag: 0.8.8
 
 EidoGo for WordPress makes it easy to embed SGF files in your WordPress-powered
 blog with the EidoGo SGF viewer and editor.
@@ -121,6 +121,11 @@ images, but you may want to add a few lines to your theme's stylesheet to
 match things like margins with the rest of your layout or to change how
 instances are laid out by default when no alignment has been specified.
 
+= I want to customize the appearance of EidoGo and need to load a stylesheet from within the iframe -- can I do that? =
+
+Yes. The plugin will check for the existence of a file called "wp-eidogo.css"
+within your theme's directory and will load it as necessary.
+
 = What other stuff can you do? =
 
 Try adding the random problem widget to your sidebar. It'll pull a random
@@ -214,6 +219,7 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 * Minor bug fixes in EidoGo
 * Improved appearance of EidoGo (using black/white text and markers as
   appropriate instead of hard-to-read red)
+* Allow loading of custom stylesheet within iframes
 
 = 0.8.7 =
 * Showing problem category and difficulty in random problem widget
@@ -295,8 +301,6 @@ Some stuff I plan to do in the future:
 
 * Add a configuration screen for tweaking the default EidoGo
   parameters
-* Allow custom EidoGo themes and loading of custom stylesheets inside
-  iframes
 * Add EidoGo's backend stuff like position search, progressive load, save to
   server, etc.
 * Expose more of EidoGo's options to the embed tag syntax
