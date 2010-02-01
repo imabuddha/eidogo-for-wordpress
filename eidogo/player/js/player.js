@@ -2203,7 +2203,7 @@ eidogo.Player.prototype = {
             </div>\
             <div id='comments' class='comments'></div>\
             <div id='comments-edit' class='comments-edit'>\
-                <textarea id='comments-edit-ta' class='comments-edit-ta'></textarea>\
+                <textarea id='comments-edit-ta' class='comments-edit-ta' rows='4' cols='40'></textarea>\
                 <div id='comments-edit-done' class='comments-edit-done'>" + t['done'] + "</div>\
             </div>\
             <div id='game-info-edit' class='game-info-edit'>\
@@ -2249,8 +2249,8 @@ eidogo.Player.prototype = {
                 <div class='options-stop'></div>\
             </div>\
             <div id='preferences' class='preferences'>\
-                <div><input type='checkbox'> Show variations on board</div>\
-                <div><input type='checkbox'> Mark current move</div>\
+                <div><input type='checkbox' /> Show variations on board</div>\
+                <div><input type='checkbox' /> Mark current move</div>\
             </div>\
             <div id='footer' class='footer'></div>\
             <div id='shade' class='shade'></div>\
