@@ -215,6 +215,10 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 
 == Changelog ==
 
+= 0.8.9
+* Fixing dim markers
+* Adding htmlcaption option
+
 = 0.8.8 =
 * Minor bug fixes in EidoGo
 * Improved appearance of EidoGo (using black/white text and markers as

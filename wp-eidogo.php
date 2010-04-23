@@ -349,13 +349,13 @@ class WpEidoGoPlugin {
 		$this->setup_hooks();
 	} # }}}
 
-	function setup_options() {
+	function setup_options() { # {{{
 		add_settings_section('wpeidogo_sgf_options', __('SGF File Handling'),
 			array(&$this, 'sgf_options_section'), 'media');
 		add_settings_field('wpeidogo_show_unpublished_problems', 'Unpublished Problems',
 			array(&$this, 'show_unpublished_problems_option'), 'media', 'wpeidogo_sgf_options');
 		register_setting('media', 'wpeidogo_show_unpublished_problems');
-	}
+	} # }}}
 
 	function sgf_options_section() { # {{{
 		echo <<<html
@@ -1096,11 +1096,15 @@ html;
 		if ($params['href'])
 			$tag = '<a href="'.htmlspecialchars($params['href']).'">'.$tag.'</a>';
 
+		$params['caption'] = htmlspecialchars($params['caption']);
+		if ($params['htmlcaption'])
+			$params['caption'] = $params['htmlcaption'];
+
 		if (!$params['caption'])
 			return $tag;
 
 		return "\n\n".'[caption id="" align="'.htmlspecialchars($params['class']).
-			'" width="'.$info[0].'" caption="('.htmlspecialchars($params['caption']).')"]'.$tag."[/caption]\n\n";
+			'" width="'.$info[0].'" caption="'.$params['caption'].'"]'.$tag."[/caption]\n\n";
 	} # }}}
 
 	function prepare_sgf($matches, $theme='compact') { # {{{
