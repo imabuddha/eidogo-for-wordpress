@@ -4,7 +4,7 @@ Donate link: href="http://www.amazon.com/gp/redirect.html?ie=UTF8&location=http%
 Tags: widget, go, weiqi, baduk, sgf, EidoGo
 Requires at least: 2.8
 Tested up to: 2.9.1
-Stable tag: 0.8.8
+Stable tag: 0.8.9
 
 EidoGo for WordPress makes it easy to embed SGF files in your WordPress-powered
 blog with the EidoGo SGF viewer and editor.
@@ -218,6 +218,7 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 = 0.8.9
 * Fixing dim markers
 * Adding htmlcaption option
+* Made absolute URL the default in sgfUrl
 
 = 0.8.8 =
 * Minor bug fixes in EidoGo
