@@ -215,7 +215,7 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 
 == Changelog ==
 
-= 0.8.9
+= 0.8.9 =
 * Fixing dim markers
 * Adding htmlcaption option
 * Made absolute URL the default in sgfUrl
