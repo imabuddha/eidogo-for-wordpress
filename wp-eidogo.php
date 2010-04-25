@@ -659,8 +659,6 @@ html;
 				value="'.htmlspecialchars($post->post_mime_type).'" />';
 		$sgf_url = $post->guid;
 		$site_url = get_option('siteurl');
-		if (substr($sgf_url, 0, strlen($site_url)) == $site_url)
-			$sgf_url = substr($sgf_url, strlen($site_url));
 		$furl = '<input type="hidden" name="attachments['.$post->ID.'][sgf_url]"
 				value="'.htmlspecialchars($sgf_url).'" />';
 
