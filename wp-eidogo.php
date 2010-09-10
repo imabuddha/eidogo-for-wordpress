@@ -340,7 +340,7 @@ class WpEidoGoPlugin {
 	var $sgf_count = 0;
 	var $sgf_prepared_markup = array();
 	var $sgf_mime_type = 'application/x-go-sgf';
-	var $fudge_unpublished = false;
+	var $fudge_query = false;
 
 	/* Initialization */
 	function WpEidoGoPlugin() { # {{{
@@ -354,18 +354,21 @@ class WpEidoGoPlugin {
 			array(&$this, 'sgf_options_section'), 'media');
 		add_settings_field('wpeidogo_show_unpublished_problems', 'Unpublished Problems',
 			array(&$this, 'show_unpublished_problems_option'), 'media', 'wpeidogo_sgf_options');
+		add_settings_field('wpeidogo_show_unpublished_games', 'Unpublished Games',
+			array(&$this, 'show_unpublished_games_option'), 'media', 'wpeidogo_sgf_options');
 		register_setting('media', 'wpeidogo_show_unpublished_problems');
+		register_setting('media', 'wpeidogo_show_unpublished_games');
 	} # }}}
 
 	function sgf_options_section() { # {{{
 		echo <<<html
 		<p>EidoGo for WordPress will normally only select problems that have
 		been published (e.g. attached to a page or post) for the random problem
-		widget and only show published problems when browsing problems by
-		category or difficulty. This option will let you see unpublished and
-		unattached problem (useful if you have uploaded a bunch of problem
-		files and don't really want to write a post just to get them to
-		display).</p>
+		widget and only show published problems and games when browsing 
+		problems by category or difficulty. This option will let you see 
+		unpublished and unattached problems or games (useful if you have uploaded 
+		a bunch of SGF files and don't really want to write a post just to get 
+		them to display).</p>
 html;
 	} # }}}
 
@@ -377,6 +380,17 @@ html;
 		<label for="wpeidogo_show_unpublished_problems"><input type="checkbox" value="1"
 			{$checked} name="wpeidogo_show_unpublished_problems" id="wpeidogo_show_unpublished_problems" />
 			Show Unpublished Problems</label>
+html;
+	} # }}}
+
+	function show_unpublished_games_option() { # {{{
+		$checked = '';
+		if (get_option('wpeidogo_show_unpublished_games'))
+			$checked = 'checked="checked"';
+		echo <<<html
+		<label for="wpeidogo_show_unpublished_games"><input type="checkbox" value="1"
+			{$checked} name="wpeidogo_show_unpublished_games" id="wpeidogo_show_unpublished_games" />
+			Show Unpublished Games</label>
 html;
 	} # }}}
 
@@ -423,20 +437,39 @@ html;
 		# When the plugin is activated
 		register_activation_hook(__FILE__, array(&$this, 'activate_plugin'));
 
-		if (get_option('wpeidogo_show_unpublished_problems'))
-			add_filter('posts_where', array(&$this, 'include_unpublished_problems'), 10, 3);
+		# Fix posts query for attachments
+		add_filter('posts_join', array(&$this, 'include_unpublished_join'), 10, 3);
+		add_filter('posts_where', array(&$this, 'include_unpublished_where'), 10, 3);
+
 	} # }}}
 
-	function include_unpublished_problems($where) { # {{{
+	function include_unpublished_join($join) { # {{{
 		global $wpdb;
-		if (!$this->fudge_unpublished)
+
+		if (!$this->fudge_query || $this->fudge_query != 'published')
+			return $join;
+
+		$join .= " left join {$wpdb->posts} as wpeid_parent on {$wpdb->posts}.post_parent = wpeid_parent.ID ";
+
+		$this->fudge_query = false;
+
+		return $join;
+	} # }}}
+
+	function include_unpublished_where($where) { # {{{
+		global $wpdb;
+		if (!$this->fudge_query)
 			return $where;
 
-		$where = str_replace("({$wpdb->posts}.post_status = 'publish')",
-			"({$wpdb->posts}.post_status = 'publish' OR {$wpdb->posts}.post_type = 'attachment')",
-			$where);
+		if ($this->fudge_query == 'unpublished')
+			$where = str_replace("{$wpdb->posts}.post_status = 'publish'",
+				"({$wpdb->posts}.post_status = 'publish' OR {$wpdb->posts}.post_type = 'attachment')",
+				$where);
+		else
+			$where = str_replace("{$wpdb->posts}.post_status = 'publish'",
+				"({$wpdb->posts}.post_status = 'publish' OR {$wpdb->posts}.post_status = 'inherit' and wpeid_parent.post_status = 'publish')",
+				$where);
 
-		$this->fudge_unpublished = false;
 		return $where;
 	} # }}}
 
@@ -454,9 +487,17 @@ html;
 		# Check to see if "display unpublished option is on
 		if (get_option('wpeidogo_show_unpublished_problems') && sizeof($taxonomies) == 1 &&
 				($taxonomies[0] == 'problem_category' || $taxonomies[0] == 'problem_difficulty')) {
-			$this->fudge_unpublished = true;
+			$this->fudge_query = 'unpublished';
 			return $terms;
 		}
+
+		if (get_option('wpeidogo_show_unpublished_games') && sizeof($taxonomies) == 1 &&
+				$taxonomies[0] == 'game_category') {
+			$this->fudge_query = 'unpublished';
+			return $terms;
+		}
+
+		$this->fudge_query = 'published';
 
 		if (!$args['fix_counts'])
 			return $terms;
@@ -529,21 +570,15 @@ html;
 	function register_taxonomies() { # {{{
 		# taxonomies for problems and games
 		register_taxonomy('problem_category', array('attachment'), array(
-			'hierarchical' => false,
 			'label' => __('Problem Category'),
-			'query_var' => 'problem_category',
 			'rewrite' => array('slug' => 'problem-category'),
 			));
 		register_taxonomy('problem_difficulty', array('attachment'), array(
-			'hierarchical' => false,
 			'label' => __('Problem Difficulty'),
-			'query_var' => 'problem_difficulty',
 			'rewrite' => array('slug' => 'problem-difficulty'),
 			));
 		register_taxonomy('game_category', array('attachment'), array(
-			'hierarchical' => false,
 			'label' => __('Game Category'),
-			'query_var' => 'game_category',
 			'rewrite' => array('slug' => 'game-category'),
 			));
 	} # }}}

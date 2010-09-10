@@ -3,8 +3,8 @@ Contributors: fwiffo
 Donate link: href="http://www.amazon.com/gp/redirect.html?ie=UTF8&location=http%3A%2F%2Fwww.amazon.com%2Fgp%2Fregistry%2Fwishlist%2F3ETA9NVNRTZ4P&tag=fomygocl-20&linkCode=ur2&camp=1789&creative=390957
 Tags: widget, go, weiqi, baduk, sgf, EidoGo
 Requires at least: 2.8
-Tested up to: 2.9.1
-Stable tag: 0.8.9
+Tested up to: 3.0.1
+Stable tag: 0.8.10
 
 EidoGo for WordPress makes it easy to embed SGF files in your WordPress-powered
 blog with the EidoGo SGF viewer and editor.
@@ -214,6 +214,11 @@ Oh, maybe I screwed up. [Send me an e-mail](http://www.fortmyersgo.org/about/).
 5. Administration for random problem widget
 
 == Changelog ==
+
+= 0.8.10 =
+* Fix compatibility between WordPress 3 and handling of attachments with
+  taxonomies
+* Add option for "show unpublished games"
 
 = 0.8.9 =
 * Fixing dim markers
